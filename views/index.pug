@@ -1,0 +1,35 @@
+doctype html
+html(lang='fr')
+  head
+    link(rel='stylesheet', type='text/css', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet', type='text/css', href='./assets/css/style.css')
+    script(type='text/javascript', src='./assets/js/jquery-3.2.1.min.js')
+    script(type='text/javascript', src='./assets/scripts/script-entete.js')
+    meta(charset='UTF-8')
+    title OnlineShop - Accueil
+  body
+    header
+      div
+        a(href='index.html')
+          img(src='assets/img/logo.svg', alt='logo')
+        nav
+          a.active(href='index.html') Accueil
+          a(href='products.html') Produits
+          a(href='contact.html') Contact
+          a.shopping-cart(href='./shopping-cart.html', title='Panier')
+            span.fa-stack.fa-lg
+              i.fa.fa-circle.fa-stack-2x.fa-inverse
+              i.fa.fa-shopping-cart.fa-stack-1x
+            span.count
+    main
+      img(src='assets/img/home.png', alt='image home')
+      h1 Page d'accueil
+      p
+        | Ce site de commerce en ligne vous permet d'accèder à un large catalogue de produits High-tech. Les bas prix que nous pratiquons
+        | font de nous le meilleur endroit pour passer au monde d'aujourd'hui et de demain.
+      a.standardButton(href='products.html') Liste de produits
+    footer
+      p
+        | GOUPIL Camille 1922286
+        br
+        | 			CHARLOT Théo 1922297

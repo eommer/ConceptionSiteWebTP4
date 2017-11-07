@@ -1,0 +1,33 @@
+doctype html
+html(lang='fr')
+  head
+    link(rel='stylesheet', type='text/css', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet', type='text/css', href='./assets/css/style.css')
+    script(type='text/javascript', src='./assets/js/jquery-3.2.1.min.js')
+    script(type='text/javascript', src='./assets/scripts/script-products.js')
+    script(type='text/javascript', src='./assets/scripts/script-entete.js')
+    meta(charset='UTF-8')
+    title OnlineShop - Produits
+  body
+    main.dividedMain
+      aside
+        section
+          h1 Catégories
+          #product-categories
+            button#cameras Appareils photo
+            button#consoles Consoles
+            button#screens Écrans
+            button#computers Ordinateurs
+            button#all.selected Tous les produits
+        section
+          h1 Classement
+          #product-criteria
+            button#priceUp.selected Prix (bas-haut)
+            button#priceDown Prix (haut-bas)
+            button#alphaUp Nom (A-Z)
+            button#alphaDown Nom (Z-A)
+      div
+        h1.col2.left-element Produits
+        p#products-count.col2.right-element
+        // En prévision du responsive, nous préférons mettre un élément <div> plutôt qu'un tableau qui risque d'être trop statique
+        #products-list

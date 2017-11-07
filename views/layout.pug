@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/css/style.css')
+  body
+  header
+    div
+      a(href='index.html')
+        img(src='assets/img/logo.svg', alt='logo')
+      nav
+        a(href='index.html') Accueil
+        a(href='products.html') Produits
+        a.active(href='contact.html') Contact
+        a.shopping-cart(href='./shopping-cart.html', title='Panier')
+          span.fa-stack.fa-lg
+            i.fa.fa-circle.fa-stack-2x.fa-inverse
+            i.fa.fa-shopping-cart.fa-stack-1x
+          span.count
+    block content
+    footer
+      p
+        | GOUPIL Camille 1922286
+        br
+        | 			CHARLOT Théo 1922297

@@ -1,0 +1,36 @@
+doctype html
+html(lang='fr')
+  head
+    link(rel='stylesheet', type='text/css', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet', type='text/css', href='./assets/css/style.css')
+    script(type='text/javascript', src='./assets/js/jquery-3.2.1.min.js')
+    script(type='text/javascript', src='./assets/scripts/script-product.js')
+    script(type='text/javascript', src='./assets/scripts/script-entete.js')
+    meta(charset='UTF-8')
+    title OnlineShop - Produit
+  body
+    main
+      h1#product-name
+      .parent-col
+        .image-produit.col2
+          img#product-image(alt='image produit')
+        .infos-produit.col2
+          div
+            h2 Description
+            p#product-desc
+          div
+            h2 Caractéristiques
+            ul#product-features
+          form#add-to-cart-form.achat-box
+            p
+              | Prix :
+              span#product-price
+            div
+              | Quantité :
+              input.form-control(type='number', name='quantity', min='1', value='1')
+              button.standardButton(type='submit')
+                i.fa.fa-shopping-cart
+                |  Ajouter
+      #centerpoint
+        #dialog
+          p Le produit a été ajouté au panier.
