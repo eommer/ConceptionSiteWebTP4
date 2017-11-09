@@ -1,14 +1,9 @@
-doctype html
-html(lang='fr')
-  head
-    link(rel='stylesheet', type='text/css', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
-    link(rel='stylesheet', type='text/css', href='./assets/css/style.css')
-    script(type='text/javascript', src='./assets/js/jquery-3.2.1.min.js')
-    script(type='text/javascript', src='./assets/scripts/script-confirmation.js')
-    script(type='text/javascript', src='./assets/scripts/script-entete.js')
-    meta(charset='UTF-8')
-    title OnlineShop - Confirmation
-  body
+extends layout.pug
+
+block scripts
+    script(src='./assets/scripts/script-confirmation.js')
+
+block content
     main
       h1
         | Votre commande est confirmée

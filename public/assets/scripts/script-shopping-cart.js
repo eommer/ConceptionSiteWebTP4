@@ -82,7 +82,7 @@ $(document).ready(function() {
                                     <div class=\"col2 cancel-button\">\
                                     <button id=\"remove-all-items-button\" class=\"standardButton\">Vider le panier</button>\
                                     </div>\
-                                    <form action=\"order.html\" class=\"col2 confirm-button\">\
+                                    <form action=\"/commande\" class=\"col2 confirm-button\">\
                                       <input type=\"submit\" value=\"Commander\" class=\"standardButton\">\
                                     </form>\
                                   </div>");

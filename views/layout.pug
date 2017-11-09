@@ -1,22 +1,37 @@
 doctype html
 html
   head
+    link(rel='stylesheet', type='text/css', href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css')
+    link(rel='stylesheet', type='text/css', href='./assets/css/style.css')
+    script(src='./assets/js/jquery-3.2.1.min.js')
+    script(src='./assets/scripts/script-entete.js')
     title= title
-    link(rel='stylesheet', href='/css/style.css')
+    block scripts
+
+    meta(charset='UTF-8')
   body
-  header
-    div
-      a(href='index.html')
-        img(src='assets/img/logo.svg', alt='logo')
-      nav
-        a(href='index.html') Accueil
-        a(href='products.html') Produits
-        a.active(href='contact.html') Contact
-        a.shopping-cart(href='./shopping-cart.html', title='Panier')
-          span.fa-stack.fa-lg
-            i.fa.fa-circle.fa-stack-2x.fa-inverse
-            i.fa.fa-shopping-cart.fa-stack-1x
-          span.count
+    header
+      div
+        a(href='/accueil')
+          img(src='assets/img/logo.svg', alt='logo')
+        nav
+          if active === 'accueil'
+            a.active(href='/accueil') Accueil
+          else
+            a(href='/accueil') Accueil
+          if active === 'produits'
+            a.active(href='/produits') Produits
+          else
+            a(href='/produits') Produits
+          if active ==='contact'
+            a.active(href='/contact') Contact
+          else
+            a(href='/contact') Contact
+          a.shopping-cart(href='./panier', title='Panier')
+            span.fa-stack.fa-lg
+              i.fa.fa-circle.fa-stack-2x.fa-inverse
+              i.fa.fa-shopping-cart.fa-stack-1x
+            span.count
     block content
     footer
       p

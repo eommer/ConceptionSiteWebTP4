@@ -116,7 +116,7 @@ $(document).ready(function() {
       //Insere le produit dans la liste
       $( "#products-list" ).append(
         "<section id=\""+val.id+"\" class=\"not-last-prod-row\">\
-          <a href=\"product.html?id="+val.id +"\">\
+          <a href=\"produit.html?id="+val.id +"\">\
             <h1>"+val.name+"</h1>\
             <img src=\"assets/img/"+val.image+"\" alt=\"image produit\">\
             <p>"+price+"$</p>\

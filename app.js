@@ -6,8 +6,10 @@ var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var session = require("express-session");
 
+
 require("./lib/db");
 var index = require("./routes/index");
+
 
 var app = express();
 
