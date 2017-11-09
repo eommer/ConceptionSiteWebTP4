@@ -10,6 +10,11 @@ var session = require("express-session");
 require("./lib/db");
 var index = require("./routes/index");
 
+/* APIs */
+var produits = require("./routes/produits");
+var panier = require("./routes/panier");
+var commandes = require("./routes/commandes");
+
 
 var app = express();
 
@@ -37,6 +42,9 @@ app.use(session({
 }));
 
 app.use("/", index);
+app.use("/api/products", produits);
+app.use("/api/shopping-cart", panier);
+app.use("/api/order", commandes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

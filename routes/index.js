@@ -32,5 +32,6 @@ router.get("/commande", function(req, res) {
 router.get("/panier", function(req, res) {
   res.render("shopping-cart", { title: "Panier"});
 });
+  
 
 module.exports = router;
