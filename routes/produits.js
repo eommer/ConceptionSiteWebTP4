@@ -84,8 +84,19 @@ router.get("/", function(req, res) {
 });
 
 /* Find One product by ID */
-router.get("/:id", function(req, res) {
+router.get("/:idToFind", function(req, res) {
+  Product.find({id : req.param('idToFind')}, '-_id', function(err, prods){
+    if (err) throw err;
 
+    if(validator.isEmpty(prods.toString())){
+      res.statusCode = "404";
+      res.send("No product found");
+    }
+    else{
+      res.statusCode = "200";
+      res.json(prods);
+    }
+  });
 });
 
 router.post("/", function(req, res) {
