@@ -84,8 +84,8 @@ router.get("/", function(req, res) {
 });
 
 /* Find One product by ID */
-router.get("/:idToFind", function(req, res) {
-  Product.find({id : req.param('idToFind')}, '-_id', function(err, prods){
+router.get("/:id", function(req, res) {
+  Product.find({id : req.param('id')}, '-_id', function(err, prods){
     if (err) throw err;
 
     if(validator.isEmpty(prods.toString())){
@@ -174,6 +174,32 @@ router.post("/", function(req, res) {
 
 });
 
+/* Delete One */
+router.delete("/:id", function(req, res) {
+  Product.find({id : req.param('id')}, function(err, prods){
+    if (err) throw err;
 
+    if(validator.isEmpty(prods.toString())){
+      res.statusCode = "404";
+      res.send("No product found");
+    }
+    else{
+      Product.findOneAndRemove({ id: req.param('id') }, function(err) {
+        if (err) throw err;
+        res.statusCode = "204";
+        res.send("Product deleted");
+        // we have deleted the user
+        console.log('Product deleted!');
+      });
+    }
+  });
+});
+
+/* Delete All */
+router.delete("/", function(req, res) {
+  Product.find({}).remove().exec();
+  res.statusCode = "204";
+  res.send("Products deleted");
+});
 
 module.exports = router;
