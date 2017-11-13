@@ -14,7 +14,8 @@ router.get("/produits", function(req, res) {
 });
 
 router.get("/produit", function(req, res) {
-  res.render("product", { title: "Produit"});
+  var id = req.param("id");
+  res.render("product", { title: "Produit", id: id});
 });
 
 router.get("/contact", function(req, res) {
@@ -32,6 +33,6 @@ router.get("/commande", function(req, res) {
 router.get("/panier", function(req, res) {
   res.render("shopping-cart", { title: "Panier"});
 });
-  
+
 
 module.exports = router;

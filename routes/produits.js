@@ -15,7 +15,7 @@ router.get("/", function(req, res) {
   var cat = req.param('category');
   var crit = req.param('criteria');
 
-  if((cat != null) && cat != "computers" && cat != "cameras" && cat != "consoles" && cat != "screens"){
+  if((cat != null) && cat != "computers" && cat != "cameras" && cat != "consoles" && cat != "screens" && cat!= "all"){
     res.statusCode = "400";
     res.send("Bad Category");
   }
@@ -27,7 +27,7 @@ router.get("/", function(req, res) {
   else{
     /* FIND */
     /* Find all with given category */
-    if((cat != null && cat != "")){
+    if((cat != null && cat != "" && cat != "all")){
       /* If the category is correct */
 
       Product.find({ category : cat}, function(err, prods){
@@ -108,7 +108,7 @@ router.post("/", function(req, res) {
   var isFeaturesCorrect = true;
   checkId(req.body.id, function(){
     if(!validator.isNumeric(req.body.id.toString()) || isIdCorrect==false) {isCorrect = false; incorrectResponse += " ID incorrect |";}
-    if(!validator.isAscii(req.body.name.toString()) || validator.isEmpty(req.body.name.toString())) {isCorrect = false; incorrectResponse += " name incorrect |";}
+    if(validator.isEmpty(req.body.name.toString())) {isCorrect = false; incorrectResponse += " name incorrect |";}
     if(!validator.isDecimal(req.body.price.toString()) || parseInt(req.body.price.toString()) < 0) {isCorrect = false; incorrectResponse += " price incorrect |";}
     if(!validator.isAscii(req.body.image.toString()) || validator.isEmpty(req.body.image.toString())) {isCorrect = false; incorrectResponse += " image incorrect |";}
     if((req.body.category != "cameras") && (req.body.category != "computers") && (req.body.category != "consoles") && (req.body.category != "screens")){isCorrect = false; incorrectResponse += " category incorrect |";}
@@ -116,7 +116,7 @@ router.post("/", function(req, res) {
     if(!checkFeatures(req.body.features)){isCorrect = false; incorrectResponse += " features incorrect |";}
 
 
-
+    /* Save product in DB if fiels are corrects */
     if(isCorrect){
       var product = new Product();
       product.id = req.body.id;
