@@ -1,8 +1,8 @@
 extends layout.pug
 
 block scripts
-  var id= id
-  script(src='./assets/scripts/script-product.js')
+  script(src='./assets/scripts/script-product.js').
+    var id= !{JSON.stringify(id)};
 
 block content
   body
