@@ -1,4 +1,6 @@
 
+var totalQuantity = 0;
+
 $(document).ready(function() {
 
 
@@ -34,12 +36,15 @@ $(document).ready(function() {
 
               //Rempli la quantité si ce produit est déjà dans le panier
               var getQuantityRequest = "http://localhost:8000/api/shopping-cart/"+id;
-              console.log("|REQUEST GET QUANITY| " +getProductRequest);
+              console.log("|REQUEST GET QUANTITY| " +getProductRequest);
               $.getJSON( getQuantityRequest, function( data ) {
                 //Si ce produit est déja dans le panier
-                if(data != null && data != "" && data.length != 0){
-                  $('.form-control').attr('value', data[0].quantity);
-                }
+                $.each( data, function( key, val ) {
+                  if(val.idProduct == id){
+                    console.log("Quantity : " + val.quantity);
+                    $('.form-control').attr('value', val.quantity);
+                  }
+                });
               });
 
           }
@@ -58,41 +63,42 @@ $(document).ready(function() {
 
   //Gestion du clic sur le bouton
   $('#add-to-cart-form').submit(function(e){
+
+
       //Évite de recharger la page
       e.preventDefault();
 
       if($('.form-control').val() > 0){
 
-        var totalQuantity = 0;
         var quantity = $('.form-control').val();
 
-        /* IF NOT ALREADY IN CART */
-        jQuery.ajax({
-          url : "http://localhost:8000/api/shopping-cart/",
-          type : "POST",
-          data : JSON.stringify({id : id, quantity : quantity}),
-          contentType : "application/json"
-        });
+        postProduct(id, quantity, function(){
 
-        ///// TODO IF ALREADY IN CART
+          console.log("POST SUCCED");
 
-
-        /* Calculates the quantity of items in the shopping-cart */
-        var totalQuantityRequest = "http://localhost:8000/api/shopping-cart/";
-        $.getJSON( totalQuantityRequest , function( data ) {
-          $.each( data, function( key, val ) {
-            totalQuantity += val.quantity;
+          ///// VERRIF test
+          $.getJSON( "http://localhost:8000/api/shopping-cart/" , function( data ) {
+            //Si ce produit est déja dans le panier
+            $.each( data, function( key, val ) {
+              console.log("id : " + val.idProduct + " | quantity : " + val.quantity);
+            });
           });
+
+          calculTotalQuantity(function(){
+
+            $('span.count').show();
+            $('span.count').html(totalQuantity);
+
+            //alert('Added to order : \n' + actualProduct.name + '\n With the quantity : ' + $('.form-control').val());
+            //console.log(lstShopProducts);
+            $('#dialog').slideUp( 300 ).delay( 0 ).fadeIn( 200 );
+            $('#dialog').slideDown( 300 ).delay( 4500 ).fadeOut( 300 );
+
+
+          });
+
         });
 
-
-        $('span.count').show();
-        $('span.count').html(totalQuantity);
-
-        //alert('Added to order : \n' + actualProduct.name + '\n With the quantity : ' + $('.form-control').val());
-        //console.log(lstShopProducts);
-        $('#dialog').slideUp( 300 ).delay( 0 ).fadeIn( 200 );
-        $('#dialog').slideDown( 300 ).delay( 4500 ).fadeOut( 300 );
       }
       else{
           alert("Attention la quantité doit être supérieure à 0");
@@ -100,3 +106,36 @@ $(document).ready(function() {
   });
 
 });
+
+function postProduct(idToPost, quantity, callback){
+
+  console.log("id to post : " + idToPost);
+
+  /* IF NOT ALREADY IN CART */
+  jQuery.ajax({
+    url : "http://localhost:8000/api/shopping-cart/",
+    type : "POST",
+    data : JSON.stringify({idProduct : idToPost, quantity : quantity}),
+    contentType : "application/json"
+  }).done(function(){
+      callback();
+  });
+
+  ///// TODO IF ALREADY IN CART
+
+
+}
+
+function calculTotalQuantity(callback){
+
+  totalQuantity = 0;
+  /* Calculates the quantity of items in the shopping-cart */
+  var totalQuantityRequest = "http://localhost:8000/api/shopping-cart/";
+  $.getJSON( totalQuantityRequest , function( data ) {
+    $.each( data, function( key, val ) {
+      totalQuantity += val.quantity;
+    });
+  });
+
+  callback();
+}
