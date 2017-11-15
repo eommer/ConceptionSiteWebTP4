@@ -133,9 +133,12 @@ function calculTotalQuantity(callback){
   var totalQuantityRequest = "http://localhost:8000/api/shopping-cart/";
   $.getJSON( totalQuantityRequest , function( data ) {
     $.each( data, function( key, val ) {
-      totalQuantity += val.quantity;
+      console.log("quantity added : " + val.quantity);
+      totalQuantity += parseInt(val.quantity.toString());
     });
+  }).done(function(){
+      console.log("total quantity : " + totalQuantity);
+      callback();
   });
 
-  callback();
 }

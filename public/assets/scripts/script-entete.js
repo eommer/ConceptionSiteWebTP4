@@ -1,40 +1,41 @@
+var totalQuantity = 0;
+
 $(document).ready(function() {
     var nbProduit;
 
     entete();
 
     function entete(){
-        if(typeof localStorage!='undefined') {
-            var count = 0;
-            if(localStorage.getItem(-1) != null){
-                count++;
-            }
-            if(localStorage.getItem(-2) != null){
-                count++;
-            }
 
-            console.log("count number : " + count);
-            if(localStorage.length - count === 0){
-                $('span.count').hide();
-            }
-            else{
+      calculTotalQuantity(function(){
+        if(totalQuantity > 0 ){
+          $('span.count').show();
+          $('span.count').html(totalQuantity);
+        }
+        else{
+          $('span.count').hide();
+        }
 
-                //To calculate the quantity
-                var totalQuantity = 0;
-                $.each(localStorage, function(index, value){
-                    if((index != -1) && (index != -2)){
-                        let product = JSON.parse(localStorage.getItem(index));
-                        totalQuantity = parseInt(totalQuantity) + parseInt(product.quantity);
-                    }
-                });
-                
-                $('span.count').show();
-                $('span.count').html(totalQuantity);
-            }
-        }
-        else {
-            alert("localStorage n'est pas supporté");
-        }
+      });
+
+
     }
+
 });
 
+function calculTotalQuantity(callback){
+
+  totalQuantity = 0;
+  /* Calculates the quantity of items in the shopping-cart */
+  var totalQuantityRequest = "http://localhost:8000/api/shopping-cart/";
+  $.getJSON( totalQuantityRequest , function( data ) {
+    $.each( data, function( key, val ) {
+      console.log("quantity added : " + val.quantity);
+      totalQuantity += parseInt(val.quantity.toString());
+    });
+  }).done(function(){
+      console.log("total quantity : " + totalQuantity);
+      callback();
+  });
+
+}
