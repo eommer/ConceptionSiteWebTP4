@@ -49,6 +49,7 @@ router.get("/:id", function(req, res){
 router.post("/", function(req, res) {
   var isCorrect = true;
   var isIdCorrect = true;
+  var isItemAlreadyInShoppingCart = false;
   var incorrectResponse = "";
   var nbError = 0;
 
@@ -57,15 +58,91 @@ router.post("/", function(req, res) {
     if(!validator.isInt(req.body.quantity.toString(), {min:0}) || validator.isEmpty(req.body.quantity.toString())){isCorrect = false; nbError++; incorrectResponse += " | quantity";}
     
     if(isCorrect){
+      //Regarde si le panier existe
       if(req.session.panier){
-        req.session.panier.push({idProduct: req.body.idProduct, quantity: req.body.quantity});
+        //Regarde si un produit déjà présent dans le panier possède cet idProduct
+        for(var i = 0; i<req.session.panier.length; i++){
+          if(req.session.panier[i].idProduct === req.body.idProduct) {isItemAlreadyInShoppingCart = true;}
+        }
+        
+        if(!isItemAlreadyInShoppingCart){
+          req.session.panier.push({idProduct: req.body.idProduct, quantity: req.body.quantity});
+
+          res.status(201);    //Code 201(Created)
+          res.send("Produit enregistré dans le panier.\nIl y a maintenant : " + req.session.panier.length);
+        }
+
+        else{
+          res.status(400);   //Code 400(Bad request)
+          res.send("Le produit est déjà enregistré dans le panier. Utilisez la méthode PUT.");
+        }
       }
       else{
         req.session.panier = [];
         req.session.panier.push({idProduct: req.body.idProduct, quantity: req.body.quantity});
+        
+        res.status(201);    //Code 201(Created)
+        res.send("Produit enregistré dans le panier.\nIl y a maintenant : " + req.session.panier.length);
       }
-      res.status(201);    //Code 201(Created)
-      res.send("Produit enregistré dans le panier.\nIl y a maintenant : " + req.session.panier.length);
+    }
+    else{
+      res.status(400);    //Code 400(Bad request)
+      res.send("Mauvaise requète. Il y a " + nbError + "élément(s) qui n'ont pas le bon le format \nErreur : " + incorrectResponse);
+    }
+  });
+
+  /* Check if an element with the same id is in the database */
+  function checkId(idToCheck, callBack){
+    Product.find({id : idToCheck}, function(err, prods){
+      if (err) throw err;
+
+      if(validator.isEmpty(prods.toString())){
+        console.log("no product with this id");
+        isIdCorrect = false;
+      }
+      else{
+        console.log("product with this id");
+      }
+      callBack();
+    });
+  }
+});
+
+/* Mise à jour d'un item dans le panier */
+router.put("/", function(req, res){
+  var isCorrect = true;
+  var isIdCorrect = true;
+  var locationItem;
+  var isItemAlreadyInShoppingCart = false;
+  var incorrectResponse = "";
+  var nbError = 0;
+
+  checkId(req.body.idProduct, function(){
+    if(!validator.isNumeric(req.body.idProduct.toString()) || validator.isEmpty(req.body.idProduct.toString()) || isIdCorrect == false){isCorrect = false; nbError++;; incorrectResponse += " | idProduct";}
+    if(!validator.isInt(req.body.quantity.toString(), {min:0}) || validator.isEmpty(req.body.quantity.toString())){isCorrect = false; nbError++; incorrectResponse += " | quantity";}
+    
+    if(isCorrect){
+      //Vérifie la présence du panier
+      if(req.session.panier){
+        //Regarde si le produit est déjà présent dans le panier
+        for(var i = 0; i<req.session.panier.length; i++){
+          if(req.session.panier[i].idProduct === req.body.idProduct) {isItemAlreadyInShoppingCart = true; locationItem = i;}
+        }
+        if(isItemAlreadyInShoppingCart){
+          req.session.panier[i].quantity = req.body.quantity;
+  
+          res.status(204);    //Code 201(No content)
+          res.send("Produit mis à jour dans le panier.\nIl y a : " + req.session.panier.length + " produit(s).");
+        }
+        else{
+          res.status(400);   //Code 404(Not found)
+          res.send("Le produit n'est pas présent dans le panier");
+        }
+      }
+      else{
+        res.status(400);   //Code 404(Not found)
+        res.send("Le produit n'est pas présent dans le panier");
+      }
     }
     else{
       res.status(400);    //Code 400(Bad request)
