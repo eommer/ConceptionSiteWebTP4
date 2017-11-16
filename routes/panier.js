@@ -26,7 +26,6 @@ router.get("/:id", function(req, res){
   var productFound = false;
   if(req.session.panier){
     for(var i=0; i<req.session.panier.length; i++){
-      console.log("Id du produit : " + req.session.panier[i].idProduct);
       if(req.session.panier[i].idProduct.toString() === req.params.id.toString()){
         productFound = true;
         res.status(200);  //Code 200(OK)
@@ -94,15 +93,15 @@ router.post("/", function(req, res) {
   /* Check if an element with the same id is in the database */
   function checkId(idToCheck, callBack){
     Product.find({id : idToCheck}, function(err, prods){
-      if (err) throw err;
+      //if (err) throw err;
+      if(err){
+        console.log(err.toString());
+      }
 
       if(validator.isEmpty(prods.toString())){
-        console.log("no product with this id");
         isIdCorrect = false;
       }
-      else{
-        console.log("product with this id");
-      }
+
       callBack();
     });
   }
@@ -129,19 +128,19 @@ router.put("/", function(req, res){
           if(req.session.panier[i].idProduct === req.body.idProduct) {isItemAlreadyInShoppingCart = true; locationItem = i;}
         }
         if(isItemAlreadyInShoppingCart){
-          req.session.panier[i].quantity = req.body.quantity;
+          req.session.panier[locationItem].quantity = req.body.quantity;
   
-          res.status(204);    //Code 201(No content)
-          res.send("Produit mis à jour dans le panier.\nIl y a : " + req.session.panier.length + " produit(s).");
+          res.status(204);    //Code 204(No content)
+          res.send();
         }
         else{
-          res.status(400);   //Code 404(Not found)
+          res.status(404);   //Code 404(Not found)
           res.send("Le produit n'est pas présent dans le panier");
         }
       }
       else{
-        res.status(400);   //Code 404(Not found)
-        res.send("Le produit n'est pas présent dans le panier");
+        res.status(404);   //Code 404(Not found)
+        res.send("Le panier est vide");
       }
     }
     else{
@@ -153,18 +152,47 @@ router.put("/", function(req, res){
   /* Check if an element with the same id is in the database */
   function checkId(idToCheck, callBack){
     Product.find({id : idToCheck}, function(err, prods){
-      if (err) throw err;
+      //if (err) throw err;
+      if(err){
+        console.log(err.toString());
+      }
 
       if(validator.isEmpty(prods.toString())){
-        console.log("no product with this id");
         isIdCorrect = false;
-      }
-      else{
-        console.log("product with this id");
       }
       callBack();
     });
   }
+});
+
+/* Supprime un produit du panier */
+router.delete("/:id", function(req, res){
+  var itemRemove = false;
+  if(req.session.panier){
+    for(var i = 0; i<req.session.panier.length; i++){
+      if(req.session.panier[i].idProduct.toString() === req.params.id.toString()){
+        itemRemove = true;
+        req.session.panier.splice(i, 1);
+        res.status(204);    //Code 204(No content)
+        res.send();
+      }
+    } 
+    if(!itemRemove){
+      res.status(404);    //Code 404(Not found)
+      res.send("Le produit avec l'id " + req.params.id + " n'existe pas dans le panier");
+    } 
+  }
+  else{
+    res.status(404);    //Code 404(Not found)
+    res.send("Le panier n'existe pas");
+  }
+});
+
+/* Supprime tout le panier */
+router.delete("/", function(req, res){
+  req.session.panier = [];
+  res.status(204);    //Code 204(No Content)
+  res.send();
 });
 
 
