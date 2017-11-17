@@ -155,7 +155,7 @@ $(document).ready(function () {
         if (ind != -1) {
           let productToChange = { "idProduct": indexToReduce, "quantity": parseInt(lstProductsSorted[ind].quantity) - 1 };
 
-          //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
+          //Envoi de la requète HTTP pour réduire la quantité du produit dans panier côté serveur
           $.ajax({
             url: getPanierRequest,
             type: 'PUT',
@@ -183,7 +183,7 @@ $(document).ready(function () {
         if (ind != -1) {
           let productToChange = { "idProduct": indexToIncrease, "quantity": parseInt(lstProductsSorted[ind].quantity) + 1 };
 
-          //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
+          //Envoi de la requète HTTP pour augmenter la quantité du produit dans panier côté serveur
           $.ajax({
             url: getPanierRequest,
             type: 'PUT',
@@ -199,12 +199,13 @@ $(document).ready(function () {
       $("#remove-all-items-button").click(function () {
         var responseConfirm = confirm("Voulez-vous supprimer tous les produits du panier ?");
         if (responseConfirm == true) {
-          //Id commandes est sauvegardé le localStorage à l'index -1
-          var numCommande = JSON.parse(localStorage.getItem(-1));
-          localStorage.clear();
-          localStorage.setItem(-1, JSON.stringify(numCommande));
-          $('span.count').hide();
-          addItemsToHtmlShopping();
+          $.ajax({
+            url: getPanierRequest,
+            type: 'DELETE',
+            success: function () {
+              getItemsFromShoppingCart();
+            }
+          });
         }
       });
     }
