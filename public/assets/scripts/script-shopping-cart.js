@@ -145,6 +145,7 @@ $(document).ready(function () {
         indexToReduce = this.id.split("-")[1];
         var ind = -1;
 
+        //Récupération de l'id dans la liste de product du produit
         for (let i = 0; i < lstProductsSorted.length; i++) {
           if (lstProductsSorted[i].id == indexToReduce) {
             ind = i;
@@ -152,7 +153,7 @@ $(document).ready(function () {
         }
 
         if (ind != -1) {
-          let productToChange = { "idProduct": indexToReduce, "quantity": lstProductsSorted[ind].quantity-1 };
+          let productToChange = { "idProduct": indexToReduce, "quantity": parseInt(lstProductsSorted[ind].quantity) - 1 };
 
           //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
           $.ajax({
@@ -164,31 +165,34 @@ $(document).ready(function () {
             }
           });
         }
-
-
       });
 
       /* Onclick des boutons d'augmentation de la quantité */
       $(".add-quantity-button").click(function () {
         var indexToIncrease;
         indexToIncrease = this.id.split("-")[1];
+        var ind = -1;
 
-        var productToIncrease = JSON.parse(localStorage.getItem(indexToIncrease));
-        productToIncrease.quantity++;
-        localStorage.setItem(productToIncrease.id, JSON.stringify(productToIncrease));
-        addItemsToHtmlShopping();
-
-        //To calculate the quantity
-        var totalQuantity = 0;
-        $.each(localStorage, function (index, value) {
-          if ((index != -1) && (index != -2)) {
-            let product = JSON.parse(localStorage.getItem(index));
-            totalQuantity = parseInt(totalQuantity) + parseInt(product.quantity);
+        //Récupération de l'id dans la liste de product du produit
+        for (let i = 0; i < lstProductsSorted.length; i++) {
+          if (lstProductsSorted[i].id == indexToIncrease) {
+            ind = i;
           }
-        });
+        }
 
-        //Changement du compte du panier
-        $('span.count').html(calculTotalQuantity);
+        if (ind != -1) {
+          let productToChange = { "idProduct": indexToIncrease, "quantity": parseInt(lstProductsSorted[ind].quantity) + 1 };
+
+          //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
+          $.ajax({
+            url: getPanierRequest,
+            type: 'PUT',
+            data: productToChange,
+            success: function () {
+              getItemsFromShoppingCart();
+            }
+          });
+        }
       });
 
       /* OnClick du bouton de suppression du panier complet */
