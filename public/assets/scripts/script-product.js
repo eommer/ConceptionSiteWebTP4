@@ -1,5 +1,7 @@
 
 var totalQuantity = 0;
+var quantityProduct = 1;
+var isProductInCart = false;
 
 $(document).ready(function() {
 
@@ -19,33 +21,24 @@ $(document).ready(function() {
       var isFound = false;
       $.each( data, function( key, val ) {
           if(val.id == id){
-              isFound = true;
-              var actualProduct = val;
-              let price = ((actualProduct.price).toString()).split(".")[0].toString() + "," + ((actualProduct.price).toString()).split(".")[1].toString();
-              $('#product-name').html(val.name);
-              $('#product-image').attr('src', "./assets/img/" + val.image);
-              $('#product-desc').html(val.description);
+            isFound = true;
+            var actualProduct = val;
+            let price = ((actualProduct.price).toString()).split(".")[0].toString() + "," + ((actualProduct.price).toString()).split(".")[1].toString();
+            $('#product-name').html(val.name);
+            $('#product-image').attr('src', "./assets/img/" + val.image);
+            $('#product-desc').html(val.description);
 
-              for(var i=0; i< val.features.length; i++){
-                  $('#product-features').append('<li>' + val.features[i] + '</li>');
-              }
+            for(var i=0; i< val.features.length; i++){
+                $('#product-features').append('<li>' + val.features[i] + '</li>');
+            }
 
-              $('#product-price').html(price + "$");
+            $('#product-price').html(price + "$");
 
+            getQuantityProduct(id, function(){
               ////// TODO récupère quantité du panier
-
               //Rempli la quantité si ce produit est déjà dans le panier
-              var getQuantityRequest = "http://localhost:8000/api/shopping-cart/"+id;
-              console.log("|REQUEST GET QUANTITY| " +getProductRequest);
-              $.getJSON( getQuantityRequest, function( data ) {
-                //Si ce produit est déja dans le panier
-                $.each( data, function( key, val ) {
-                  if(val.idProduct == id){
-                    console.log("Quantity : " + val.quantity);
-                    $('.form-control').attr('value', val.quantity);
-                  }
-                });
-              });
+              $('.form-control').attr('value', quantityProduct);
+            });
 
           }
       });
@@ -107,22 +100,52 @@ $(document).ready(function() {
 
 });
 
-function postProduct(idToPost, quantity, callback){
+function getQuantityProduct(idProduct, callback){
 
-  console.log("id to post : " + idToPost);
-
-  /* IF NOT ALREADY IN CART */
-  jQuery.ajax({
-    url : "http://localhost:8000/api/shopping-cart/",
-    type : "POST",
-    data : JSON.stringify({idProduct : idToPost, quantity : quantity}),
-    contentType : "application/json"
+  var getQuantityRequest = "http://localhost:8000/api/shopping-cart/"+idProduct;
+  console.log("quantity request : " + getQuantityRequest);
+  $.getJSON( getQuantityRequest, function( data ) {
+    //Si ce produit est déja dans le panier
+    console.log("QUANTITY || id : " + data.idProduct + " | quantity : " + data.quantity);
+    quantityProduct = data.quantity;
   }).done(function(){
       callback();
   });
 
-  ///// TODO IF ALREADY IN CART
+}
 
+function postProduct(idToPost, quantity, callback){
+
+  console.log("id to post : " + idToPost);
+
+  checkProductInCart(idToPost, function(){
+
+    /* IF NOT ALREADY IN CART */
+    if(!isProductInCart){
+      console.log("post");
+      jQuery.ajax({
+        url : "http://localhost:8000/api/shopping-cart/",
+        type : "POST",
+        data : JSON.stringify({idProduct : idToPost, quantity : quantity}),
+        contentType : "application/json"
+      }).done(function(){
+          callback();
+      });
+    }
+    /* IF ALREADY IN CART */
+    else{
+      console.log("put");
+      jQuery.ajax({
+        url : "http://localhost:8000/api/shopping-cart/",
+        type : "PUT",
+        data : JSON.stringify({idProduct : idToPost, quantity : quantity}),
+        contentType : "application/json"
+      }).done(function(){
+          callback();
+      });
+    }
+
+  });
 
 }
 
@@ -141,4 +164,18 @@ function calculTotalQuantity(callback){
       callback();
   });
 
+}
+
+function checkProductInCart(idProduct, callback){
+
+  var getExistingRequest = "http://localhost:8000/api/shopping-cart/"+idProduct;
+  console.log("existing request : " + getExistingRequest);
+  $.getJSON( getExistingRequest, function( data ) {
+    console.log("existing data : " + data);
+
+
+
+  })
+  .done(function(){ isProductInCart = true; callback();})
+  .fail(function(){ isProductInCart = false; callback();})
 }
