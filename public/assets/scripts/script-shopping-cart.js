@@ -58,11 +58,13 @@ $(document).ready(function () {
       });
 
       lstProductsSorted = await allMyPromises;
-      console.log(lstProductsSorted);
-      console.log("Traitemnet done");
+
       /* Calcul du prix total du panier */
       calculTotalPrice();
       var totalPriceStr = (((totalPrice).toFixed(2)).toString()).split(".")[0].toString() + "," + (((totalPrice).toFixed(2)).toString()).split(".")[1].toString();
+
+      //////VOIR POUR SUPPRIMER CA
+      $("span.count").html(calculTotalQuantity());
 
       $("#main-cart").empty();
       $("#main-cart").append("<h1 id=\"shop-title\">Panier</h1>\
@@ -115,6 +117,7 @@ $(document).ready(function () {
                                 </form>\
                               </div>");
 
+
       /** OnClick des boutons de suppression d'un produit */
       $(".remove-item-button").click(function () {
         var indexToRemove;
@@ -129,32 +132,40 @@ $(document).ready(function () {
           $.ajax({
             url: deleteItemRequest,
             type: 'DELETE',
-            success: function(){
+            success: function () {
               getItemsFromShoppingCart();
             }
           });
         }
       });
 
-      /* Onclick des boutons de diminution de la quantité */
+      /** Onclick des boutons de diminution de la quantité */
       $(".remove-quantity-button").click(function () {
         var indexToReduce;
         indexToReduce = this.id.split("-")[1];
-        var productToReduce = JSON.parse(localStorage.getItem(indexToReduce));
-        if (productToReduce.quantity > 1) {
-          productToReduce.quantity--;
-          localStorage.setItem(productToReduce.id, JSON.stringify(productToReduce));
-        }
-        addItemsToHtmlShopping();
-        if (productToReduce.quantity === 1) {
-          $("#" + this.id).attr('disabled', 'disabled');
-        }
-        else {
-          $("#" + this.id).removeAttr('disabled');
+        var ind = -1;
+
+        for (let i = 0; i < lstProductsSorted.length; i++) {
+          if (lstProductsSorted[i].id == indexToReduce) {
+            ind = i;
+          }
         }
 
-        //Changement du compte du panier
-        $('span.count').html(calculTotalQuantity);
+        if (ind != -1) {
+          let productToChange = { "idProduct": indexToReduce, "quantity": lstProductsSorted[ind].quantity-1 };
+
+          //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
+          $.ajax({
+            url: getPanierRequest,
+            type: 'PUT',
+            data: productToChange,
+            success: function () {
+              getItemsFromShoppingCart();
+            }
+          });
+        }
+
+
       });
 
       /* Onclick des boutons d'augmentation de la quantité */
