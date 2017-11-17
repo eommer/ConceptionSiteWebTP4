@@ -122,19 +122,17 @@ $(document).ready(function () {
 
         var responseConfirm = confirm("Voulez vous supprimer ce produit du panier?");
         if (responseConfirm == true) {
-          localStorage.removeItem(indexToRemove);
-          addItemsToHtmlShopping();
 
-          //To calculate the quantity
-          var totalQuantity = 0;
-          $.each(localStorage, function (index, value) {
-            if (index >= 0) {
-              let product = JSON.parse(localStorage.getItem(index));
-              totalQuantity = parseInt(totalQuantity) + parseInt(product.quantity);
+          let deleteItemRequest = getPanierRequest + "/" + indexToRemove;
+
+          //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
+          $.ajax({
+            url: deleteItemRequest,
+            type: 'DELETE',
+            success: function(){
+              getItemsFromShoppingCart();
             }
           });
-
-          $('span.count').html(calculTotalQuantity);
         }
       });
 
