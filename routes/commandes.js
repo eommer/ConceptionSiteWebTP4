@@ -131,10 +131,17 @@ router.delete("/:id", function(req, res) {
       Order.findOneAndRemove({ id: req.params.id.toString() }, function(err) {
         if (err) throw err;
         res.status(204);    //Code 204(No content)
-        res.send("Order deleted");
+        res.send();
       });
     }
   });
+});
+
+/** Supprime toutes les commandes présentes dans la base de données */
+router.delete("/", function(req, res) {
+  Order.find({}).remove().exec();
+  res.status(204);      //Code 204(No content)
+  res.send();
 });
 
 
