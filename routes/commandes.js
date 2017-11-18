@@ -56,7 +56,7 @@ router.post("/", function (req, res) {
     if (validator.isEmpty(req.body.firstName.toString())) { isCorrect = false; incorrectResponse += " firstName incorrect |"; }
     if (validator.isEmpty(req.body.lastName.toString())) { isCorrect = false; incorrectResponse += " lastName incorrect |"; }
     if (validator.isEmpty(req.body.email.toString()) || !validator.isEmail(req.body.email.toString())) { isCorrect = false; incorrectResponse += " email incorrect |"; }
-  if (validator.isEmpty(req.body.phone.toString()) /*|| !validator.isMobilePhone(req.body.phone.toString())*/) { isCorrect = false; incorrectResponse += " phone incorrect |"; }
+    if (validator.isEmpty(req.body.phone.toString()) /*|| !validator.isMobilePhone(req.body.phone.toString())*/) { isCorrect = false; incorrectResponse += " phone incorrect |"; }
     if (!checkProducts(req.body.features)) { isCorrect = false; incorrectResponse += " features incorrect |"; }
 
 
@@ -69,7 +69,7 @@ router.post("/", function (req, res) {
       order.email = req.body.email;
       order.phone = req.body.phone;
       order.products = req.body.products;
-      
+
       order.save(function (err) {
         if (err) {
           res.status(400);    //Code 400(Bad request)
@@ -87,6 +87,7 @@ router.post("/", function (req, res) {
 
   });
 
+
   /* Check if an element with the same id is already in the DB */
   function checkId(idToCheck, callBack) {
     Order.find({ id: idToCheck }, function (err, orders) {
@@ -103,6 +104,7 @@ router.post("/", function (req, res) {
     });
   }
 
+
   /** Vérifie que les informations (id et quantity) sur les produits sont ok */
   function checkProducts(featuresToCheck) {
     if (featuresToCheck != null && featuresToCheck != []) {
@@ -114,21 +116,21 @@ router.post("/", function (req, res) {
     }
     return isFeaturesCorrect;
   }
-  
+
 });
 
 
 /** Supprime une commande dans la base de données en fonction de l'id passé en paramètre */
-router.delete("/:id", function(req, res) {
-  Order.find({id : req.params.id.toString()}, function(err, orders){
+router.delete("/:id", function (req, res) {
+  Order.find({ id: req.params.id.toString() }, function (err, orders) {
     if (err) throw err;
 
-    if(validator.isEmpty(orders.toString())){
+    if (validator.isEmpty(orders.toString())) {
       res.status(404);    //Code 404(Not found)
       res.send("Order found not found");
     }
-    else{
-      Order.findOneAndRemove({ id: req.params.id.toString() }, function(err) {
+    else {
+      Order.findOneAndRemove({ id: req.params.id.toString() }, function (err) {
         if (err) throw err;
         res.status(204);    //Code 204(No content)
         res.send();
@@ -137,14 +139,13 @@ router.delete("/:id", function(req, res) {
   });
 });
 
+
 /** Supprime toutes les commandes présentes dans la base de données */
-router.delete("/", function(req, res) {
+router.delete("/", function (req, res) {
   Order.find({}).remove().exec();
   res.status(204);      //Code 204(No content)
   res.send();
 });
-
-
 
 
 module.exports = router;
