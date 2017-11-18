@@ -118,6 +118,26 @@ router.post("/", function (req, res) {
 });
 
 
+/** Supprime une commande dans la base de données en fonction de l'id passé en paramètre */
+router.delete("/:id", function(req, res) {
+  Order.find({id : req.params.id.toString()}, function(err, orders){
+    if (err) throw err;
+
+    if(validator.isEmpty(orders.toString())){
+      res.status(404);    //Code 404(Not found)
+      res.send("Order found not found");
+    }
+    else{
+      Order.findOneAndRemove({ id: req.params.id.toString() }, function(err) {
+        if (err) throw err;
+        res.status(204);    //Code 204(No content)
+        res.send("Order deleted");
+      });
+    }
+  });
+});
+
+
 
 
 module.exports = router;
