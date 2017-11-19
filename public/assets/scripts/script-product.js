@@ -173,8 +173,6 @@ function checkProductInCart(idProduct, callback){
   $.getJSON( getExistingRequest, function( data ) {
     console.log("existing data : " + data);
 
-
-
   })
   .done(function(){ isProductInCart = true; callback();})
   .fail(function(){ isProductInCart = false; callback();})
