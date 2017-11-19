@@ -46,13 +46,16 @@ $(document).ready(function () {
         $.getJSON(shoppingCartRequest, function (data) {
           items = data;
         }).done(function () {
+          var idOrder;
           //Pas encore de commande dans la base de données
           if (orders.length == 0) {
-            order = JSON.stringify({ "id": 0, "firstName": $("#first-name").val(), "lastName": $("#last-name").val(), "email": $("#email").val(), "phone": $("#phone").val(), "products": items });
+            idOrder = 0;
           }
           else {
-            order = JSON.stringify({ "id": parseInt(orders[orders.length-1].id) + 1, "firstName": $("#first-name").val(), "lastName": $("#last-name").val(), "email": $("#email").val(), "phone": $("#phone").val(), "products": items });
+            idOrder = parseInt(orders[orders.length - 1].id) + 1;
           }
+          order = JSON.stringify({ "id": idOrder, "firstName": $("#first-name").val(), "lastName": $("#last-name").val(), "email": $("#email").val(), "phone": $("#phone").val(), "products": items });
+
 
           jQuery.ajax({
             url: orderRequest,
@@ -62,18 +65,23 @@ $(document).ready(function () {
             complete: function (res) {
               console.log("res : " + res.status);
 
-              if(res.status == 201){
-                //$("#order-form").ajaxSubmit();
-                submitHandler();
-                $("#order-form").submit();
+              if (res.status == 201) {
+                //Suppression de tous les éléments du panier 
+                $.ajax({
+                  url: shoppingCartRequest,
+                  type: 'DELETE',
+                  success: function () {
+                    document.location.href = "http://localhost:8000/confirmation?id=" + idOrder;
+                  }
+                });
               }
-              else{
+              else {
                 alert("Erreur dans l'enregistrement de votre commande : " + res);
               }
             }
           });
+        });
       });
-    });
 
       //getOrders();
     }
