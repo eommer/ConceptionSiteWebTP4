@@ -7,7 +7,7 @@ $(document).ready(function () {
     var sURLVariables = sPageURL.split('=');
     id = sURLVariables[1];
 
-    orderRequest = "http://localhost:8000/api/order/" + id;
+    orderRequest = "http://localhost:8000/api/orders/" + id;
 
     console.log("|REQUEST| : " + orderRequest);
 
@@ -18,7 +18,7 @@ function getOrder() {
     console.log(orderRequest);
 
     $.getJSON(orderRequest, function (data) {
-        order = data[0];
+        order = data;
         console.log(order);
     }).done(function () {
         var numCommande = " " + order.id;

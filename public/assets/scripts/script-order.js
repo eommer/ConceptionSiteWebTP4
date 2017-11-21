@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  var orderRequest = "http://localhost:8000/api/order/";
+  var orderRequest = "http://localhost:8000/api/orders/";
   var shoppingCartRequest = "http://localhost:8000/api/shopping-cart/";
   var orders = new Array();
   var items = new Array();
@@ -66,7 +66,7 @@ $(document).ready(function () {
               console.log("res : " + res.status);
 
               if (res.status == 201) {
-                //Suppression de tous les éléments du panier 
+                //Suppression de tous les éléments du panier
                 $.ajax({
                   url: shoppingCartRequest,
                   type: 'DELETE',
@@ -136,7 +136,7 @@ $(document).ready(function () {
     contentType: "application/json",
     complete: function (res) {
       console.log("res : " + res.status);
-      
+
       $("#order-form").ajaxSubmit();
     }
   });

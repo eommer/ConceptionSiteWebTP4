@@ -27,55 +27,57 @@ router.get("/", function(req, res) {
   else{
     /* FIND */
     /* Find all with given category */
-    if((cat != null && cat != "" && cat != "all")){
+    if(cat != null && cat != "" && cat != "all"){
       /* If the category is correct */
 
-      Product.find({ category : cat}, function(err, prods){
+      Product.find({ category : cat}, {_id : 0}, function(err, prods){
         /* CRITERIA */
-        if((crit != null && crit != "")){
-          function sortJson(a,b){
-            if(crit == "price-asc"){ return a.price > b.price? 1 : -1; }
-            else if(crit == "price-dsc"){ return a.price > b.price? -1 : 1; }
-            else if(crit == "alpha-asc"){
-              let nameLowerCaseA = a.name.toLowerCase();
-              let nameLowerCaseB = b.name.toLowerCase();
-              return nameLowerCaseA > nameLowerCaseB? 1 : -1;}
-            else if(crit == "alpha-dsc"){
-              let nameLowerCaseA = a.name.toLowerCase();
-              let nameLowerCaseB = b.name.toLowerCase();
-              return nameLowerCaseA > nameLowerCaseB? -1 : 1;}
-            else {
-              res.statusCode = "400";
-              res.send("Bad Criteria");
-            }
+        function sortJson(a,b){
+          if(crit == "price-asc" || crit === "" || crit == null){ return a.price > b.price? 1 : -1; }
+          else if(crit == "price-dsc"){ return a.price > b.price? -1 : 1; }
+          else if(crit == "alpha-asc"){
+            let nameLowerCaseA = a.name.toLowerCase();
+            let nameLowerCaseB = b.name.toLowerCase();
+            return nameLowerCaseA > nameLowerCaseB? 1 : -1;}
+          else if(crit == "alpha-dsc"){
+            let nameLowerCaseA = a.name.toLowerCase();
+            let nameLowerCaseB = b.name.toLowerCase();
+            return nameLowerCaseA > nameLowerCaseB? -1 : 1;}
+          else {
+            res.statusCode = "400";
+            res.send("Bad Criteria");
           }
-          prods.sort(sortJson);
         }
+        prods.sort(sortJson);
 
-        res.json(prods);
+
+        res.send(prods);
       });
     }
     /* Find all */
     else{
-      Product.find({}, function(err, prods){
+      Product.find({}, {_id : 0}, function(err, prods){
         /* CRITERIA */
-        if((crit != null && crit != "")){
-          function sortJson(a,b){
-            if(crit == "price-asc"){ return a.price > b.price? 1 : -1; }
-            else if(crit == "price-dsc"){ return a.price > b.price? -1 : 1; }
-            else if(crit == "alpha-asc"){
-              let nameLowerCaseA = a.name.toLowerCase();
-              let nameLowerCaseB = b.name.toLowerCase();
-              return nameLowerCaseA > nameLowerCaseB? 1 : -1;}
-            else if(crit == "alpha-dsc"){
-              let nameLowerCaseA = a.name.toLowerCase();
-              let nameLowerCaseB = b.name.toLowerCase();
-              return nameLowerCaseA > nameLowerCaseB? -1 : 1;}
+        function sortJson(a,b){
+          if(crit == "price-asc" || crit === "" || crit == null){ return a.price > b.price? 1 : -1; }
+          else if(crit == "price-dsc"){ return a.price > b.price? -1 : 1; }
+          else if(crit == "alpha-asc"){
+            let nameLowerCaseA = a.name.toLowerCase();
+            let nameLowerCaseB = b.name.toLowerCase();
+            return nameLowerCaseA > nameLowerCaseB? 1 : -1;}
+          else if(crit == "alpha-dsc"){
+            let nameLowerCaseA = a.name.toLowerCase();
+            let nameLowerCaseB = b.name.toLowerCase();
+            return nameLowerCaseA > nameLowerCaseB? -1 : 1;}
+          else {
+            res.statusCode = "400";
+            res.send("Bad Criteria");
           }
-          prods.sort(sortJson);
         }
 
-        res.json(prods);
+        prods.sort(sortJson);
+
+        res.send(prods);
       });
     }
 
@@ -85,7 +87,7 @@ router.get("/", function(req, res) {
 
 /* Find One product by ID */
 router.get("/:id", function(req, res) {
-  Product.find({id : req.param('id')}, '-_id', function(err, prods){
+  Product.find({id : req.params.id.toString()}, {_id : 0}, function(err, prods){
     if (err) throw err;
 
     if(validator.isEmpty(prods.toString())){
@@ -93,8 +95,9 @@ router.get("/:id", function(req, res) {
       res.send("No product found");
     }
     else{
+      console.log("GET " + req.params.id.toString() + " : " + prods[0]);
       res.statusCode = "200";
-      res.json(prods);
+      res.send(prods[0]);
     }
   });
 });
@@ -107,7 +110,7 @@ router.post("/", function(req, res) {
   var isCorrect = true;
   var isFeaturesCorrect = true;
   checkId(req.body.id, function(){
-    if(!validator.isNumeric(req.body.id.toString()) || isIdCorrect==false) {isCorrect = false; incorrectResponse += " ID incorrect |";}
+    if(validator.isEmpty(req.body.id.toString()) || (!validator.isInt(req.body.id.toString())) || isIdCorrect==false) {isCorrect = false; incorrectResponse += " ID incorrect |";}
     if(validator.isEmpty(req.body.name.toString())) {isCorrect = false; incorrectResponse += " name incorrect |";}
     if(!validator.isDecimal(req.body.price.toString()) || parseInt(req.body.price.toString()) < 0) {isCorrect = false; incorrectResponse += " price incorrect |";}
     if(!validator.isAscii(req.body.image.toString()) || validator.isEmpty(req.body.image.toString())) {isCorrect = false; incorrectResponse += " image incorrect |";}
@@ -134,7 +137,7 @@ router.post("/", function(req, res) {
         }
 
         res.statusCode = "201";
-        res.json(req.body);
+        res.json(product);
       });
     }
     else{
@@ -176,7 +179,7 @@ router.post("/", function(req, res) {
 
 /* Delete One */
 router.delete("/:id", function(req, res) {
-  Product.find({id : req.param('id')}, function(err, prods){
+  Product.find({id : req.params.id.toString()}, function(err, prods){
     if (err) throw err;
 
     if(validator.isEmpty(prods.toString())){

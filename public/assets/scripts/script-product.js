@@ -18,29 +18,24 @@ $(document).ready(function() {
 
   //Rempli la page html avec les informations dans le fichier Json products.json
   $.getJSON( getProductRequest, function( data ) {
-      var isFound = false;
-      $.each( data, function( key, val ) {
-          if(val.id == id){
-            isFound = true;
-            var actualProduct = val;
-            let price = ((actualProduct.price).toString()).split(".")[0].toString() + "," + ((actualProduct.price).toString()).split(".")[1].toString();
-            $('#product-name').html(val.name);
-            $('#product-image').attr('src', "./assets/img/" + val.image);
-            $('#product-desc').html(val.description);
+      var isFound = true;
+      var val = data;
+      var actualProduct = val;
+      let price = ((actualProduct.price).toString()).split(".")[0].toString() + "," + ((actualProduct.price).toString()).split(".")[1].toString();
+      $('#product-name').html(val.name);
+      $('#product-image').attr('src', "./assets/img/" + val.image);
+      $('#product-desc').html(val.description);
 
-            for(var i=0; i< val.features.length; i++){
-                $('#product-features').append('<li>' + val.features[i] + '</li>');
-            }
+      for(var i=0; i< val.features.length; i++){
+          $('#product-features').append('<li>' + val.features[i] + '</li>');
+      }
 
-            $('#product-price').html(price + "$");
+      $('#product-price').html(price + "$");
 
-            getQuantityProduct(id, function(){
-              ////// TODO récupère quantité du panier
-              //Rempli la quantité si ce produit est déjà dans le panier
-              $('.form-control').attr('value', quantityProduct);
-            });
-
-          }
+      getQuantityProduct(id, function(){
+        ////// TODO récupère quantité du panier
+        //Rempli la quantité si ce produit est déjà dans le panier
+        $('.form-control').attr('value', quantityProduct);
       });
 
       // Si l'élément n'a pas été trouvé dans le fichier jsons
@@ -52,7 +47,6 @@ $(document).ready(function() {
 
   });
 
-//////// TODO
 
   //Gestion du clic sur le bouton
   $('#add-to-cart-form').submit(function(e){

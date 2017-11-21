@@ -12,23 +12,23 @@ var jsonParser = bodyParser.json();
 
 /** Récupère toutes les commandes présentes dans la base de données */
 router.get("/", function (req, res) {
-  Order.find(function (err, orders) {
+  Order.find({}, {_id : 0}, function (err, orders) {
     if (err) throw err;
 
-    console.log(orders);
+    console.log(" GET ALL : " + orders);
     let lstOrders = [];
     if (orders.length > 0) {
       lstOrders = orders;
     }
     res.status(200);    //Code : 200(OK)
-    res.json(lstOrders);
+    res.send(lstOrders);
   })
 });
 
 
 /** Récupère la commande avec l'id mis en paramètre */
 router.get("/:id", function (req, res) {
-  Order.find({ id: req.params.id.toString() }, function (err, orders) {
+  Order.find({ id: req.params.id.toString() }, {_id : 0}, function (err, orders) {
     if (err) throw err;
 
     if (validator.isEmpty(orders.toString())) {
@@ -36,8 +36,9 @@ router.get("/:id", function (req, res) {
       res.send("Order not found");
     }
     else {
+      console.log("GET " + req.params.id.toString() + " : " + orders)
       res.status(200)   //Code : 200(OK)
-      res.json(orders);
+      res.send(orders[0]);
     }
   });
 });

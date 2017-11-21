@@ -44,7 +44,7 @@ app.use(session({
 app.use("/", index);
 app.use("/api/products", produits);
 app.use("/api/shopping-cart", panier);
-app.use("/api/order", commandes);
+app.use("/api/orders", commandes);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
