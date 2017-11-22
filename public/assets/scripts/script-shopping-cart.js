@@ -43,7 +43,7 @@ $(document).ready(function () {
             var getProductRequest = getProductsRequest + "/" + value.idProduct;
 
             $.getJSON(getProductRequest, function (data) {
-              produc = data[0];
+              produc = data;
               console.log(produc);
             }).done(function () {
               ar({ "id": produc.id, "name": produc.name, "price": produc.price, "quantity": value.quantity });

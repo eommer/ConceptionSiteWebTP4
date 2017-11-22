@@ -67,7 +67,7 @@ $(document).ready(function() {
           $.getJSON( "http://localhost:8000/api/shopping-cart/" , function( data ) {
             //Si ce produit est déja dans le panier
             $.each( data, function( key, val ) {
-              console.log("id : " + val.idProduct + " | quantity : " + val.quantity);
+              console.log("id : " + val.id + " | quantity : " + val.quantity);
             });
           });
 
@@ -94,13 +94,13 @@ $(document).ready(function() {
 
 });
 
-function getQuantityProduct(idProduct, callback){
+function getQuantityProduct(id, callback){
 
-  var getQuantityRequest = "http://localhost:8000/api/shopping-cart/"+idProduct;
+  var getQuantityRequest = "http://localhost:8000/api/shopping-cart/"+id;
   console.log("quantity request : " + getQuantityRequest);
   $.getJSON( getQuantityRequest, function( data ) {
     //Si ce produit est déja dans le panier
-    console.log("QUANTITY || id : " + data.idProduct + " | quantity : " + data.quantity);
+    console.log("QUANTITY || id : " + data.id + " | quantity : " + data.quantity);
     quantityProduct = data.quantity;
   }).done(function(){
       callback();
@@ -120,7 +120,7 @@ function postProduct(idToPost, quantity, callback){
       jQuery.ajax({
         url : "http://localhost:8000/api/shopping-cart/",
         type : "POST",
-        data : JSON.stringify({idProduct : idToPost, quantity : quantity}),
+        data : JSON.stringify({id : idToPost, quantity : quantity}),
         contentType : "application/json"
       }).done(function(){
           callback();
@@ -132,7 +132,7 @@ function postProduct(idToPost, quantity, callback){
       jQuery.ajax({
         url : "http://localhost:8000/api/shopping-cart/",
         type : "PUT",
-        data : JSON.stringify({idProduct : idToPost, quantity : quantity}),
+        data : JSON.stringify({id : idToPost, quantity : quantity}),
         contentType : "application/json"
       }).done(function(){
           callback();
@@ -160,9 +160,9 @@ function calculTotalQuantity(callback){
 
 }
 
-function checkProductInCart(idProduct, callback){
+function checkProductInCart(id, callback){
 
-  var getExistingRequest = "http://localhost:8000/api/shopping-cart/"+idProduct;
+  var getExistingRequest = "http://localhost:8000/api/shopping-cart/"+id;
   console.log("existing request : " + getExistingRequest);
   $.getJSON( getExistingRequest, function( data ) {
     console.log("existing data : " + data);

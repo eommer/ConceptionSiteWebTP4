@@ -112,7 +112,7 @@ describe("API du panier d'achats", function() {
    */
   describe("POST /api/shopping-cart", function() {
     it("doit indiquer une erreur si l'identifiant du produit spécifié n'existe pas", function(done) {
-      var invalidProductId = rn({
+      var invalidId = rn({
         min:  productsListLength + 1,
         max:  1000,
         integer: true
@@ -121,7 +121,7 @@ describe("API du panier d'achats", function() {
       agent.post("/api/shopping-cart")
         .set("content-type", "application/json")
         .send({
-          productId: invalidProductId,
+          productId: invalidId,
           quantity: 1
         })
         .end(function(err, res) {
@@ -191,7 +191,7 @@ describe("API du panier d'achats", function() {
    */
   describe("PUT /api/shopping-cart/:productId", function() {
     it("doit indiquer une erreur si l'identifiant du produit spécifié n'existe pas dans le panier", function(done) {
-      var invalidProductId = rn({
+      var invalidId = rn({
         min:  2,
         max:  1000,
         integer: true
@@ -202,7 +202,7 @@ describe("API du panier d'achats", function() {
       };
       var agent = chai.request.agent(server);
       addEntry(agent, entry, function() {
-        agent.put("/api/shopping-cart/" + invalidProductId)
+        agent.put("/api/shopping-cart/" + invalidId)
           .set("content-type", "application/json")
           .send({
             quantity: 1
@@ -292,7 +292,7 @@ describe("API du panier d'achats", function() {
       });
     });
     it("doit indiquer une erreur si l'identifiant du produit spécifié n'existe pas dans le panier", function(done) {
-      var invalidProductId = rn({
+      var invalidId = rn({
         min:  productsListLength + 1,
         max:  1000,
         integer: true
@@ -303,7 +303,7 @@ describe("API du panier d'achats", function() {
       };
       var agent = chai.request.agent(server);
       addEntry(agent, entry, function() {
-        agent.delete("/api/shopping-cart/" + invalidProductId)
+        agent.delete("/api/shopping-cart/" + invalidId)
           .end(function(err, res) {
             res.should.have.status(404);
             done();

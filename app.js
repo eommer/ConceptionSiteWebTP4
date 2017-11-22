@@ -5,6 +5,7 @@ var logger = require("morgan");
 var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var session = require("express-session");
+var validator = require('validator');
 
 
 require("./lib/db");
@@ -40,6 +41,8 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }
 }));
+
+
 
 app.use("/", index);
 app.use("/api/products", produits);
