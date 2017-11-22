@@ -120,7 +120,7 @@ function postProduct(idToPost, quantity, callback){
       jQuery.ajax({
         url : "http://localhost:8000/api/shopping-cart/",
         type : "POST",
-        data : JSON.stringify({id : idToPost, quantity : quantity}),
+        data : JSON.stringify({productId : idToPost, quantity : quantity}),
         contentType : "application/json"
       }).done(function(){
           callback();
@@ -132,7 +132,7 @@ function postProduct(idToPost, quantity, callback){
       jQuery.ajax({
         url : "http://localhost:8000/api/shopping-cart/",
         type : "PUT",
-        data : JSON.stringify({id : idToPost, quantity : quantity}),
+        data : JSON.stringify({productId : idToPost, quantity : quantity}),
         contentType : "application/json"
       }).done(function(){
           callback();

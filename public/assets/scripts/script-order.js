@@ -3,6 +3,7 @@ $(document).ready(function () {
   var shoppingCartRequest = "http://localhost:8000/api/shopping-cart/";
   var orders = new Array();
   var items = new Array();
+  var itemsForOrder = new Array();
   var order;
 
 
@@ -46,40 +47,44 @@ $(document).ready(function () {
         $.getJSON(shoppingCartRequest, function (data) {
           items = data;
         }).done(function () {
-          var idOrder;
-          //Pas encore de commande dans la base de données
-          if (orders.length == 0) {
-            idOrder = 0;
-          }
-          else {
-            idOrder = parseInt(orders[orders.length - 1].id) + 1;
-          }
-          order = JSON.stringify({ "id": idOrder, "firstName": $("#first-name").val(), "lastName": $("#last-name").val(), "email": $("#email").val(), "phone": $("#phone").val(), "products": items });
+          items.forEach(function(val){
 
-
-          jQuery.ajax({
-            url: orderRequest,
-            type: "POST",
-            data: order,
-            contentType: "application/json",
-            complete: function (res) {
-              console.log("res : " + res.status);
-
-              if (res.status == 201) {
-                //Suppression de tous les éléments du panier
-                $.ajax({
-                  url: shoppingCartRequest,
-                  type: 'DELETE',
-                  success: function () {
-                    document.location.href = "http://localhost:8000/confirmation?id=" + idOrder;
-                  }
-                });
-              }
-              else {
-                alert("Erreur dans l'enregistrement de votre commande : " + res);
-              }
+          }).done(function(){
+            var idOrder;
+            //Pas encore de commande dans la base de données
+            if (orders.length == 0) {
+              idOrder = 0;
             }
-          });
+            else {
+              idOrder = parseInt(orders[orders.length - 1].id) + 1;
+            }
+            order = JSON.stringify({ "id": idOrder, "firstName": $("#first-name").val(), "lastName": $("#last-name").val(), "email": $("#email").val(), "phone": $("#phone").val(), "products": itemsForOrder });
+
+            jQuery.ajax({
+              url: orderRequest,
+              type: "POST",
+              data: order,
+              contentType: "application/json",
+              complete: function (res) {
+                console.log("res : " + res.status);
+
+                if (res.status == 201) {
+                  //Suppression de tous les éléments du panier
+                  $.ajax({
+                    url: shoppingCartRequest,
+                    type: 'DELETE',
+                    success: function () {
+                      document.location.href = "http://localhost:8000/confirmation?id=" + idOrder;
+                    }
+                  });
+                }
+                else {
+                  alert("Erreur dans l'enregistrement de votre commande : " + res);
+                }
+              }
+            });
+          })
+
         });
       });
 

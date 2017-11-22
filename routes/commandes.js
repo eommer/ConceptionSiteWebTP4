@@ -113,27 +113,86 @@ router.post("/", function (req, res) {
   /* Vérifie que les informations (id et quantity) sur les produits sont ok */
   function checkProducts(ProductsToCheck, callback) {
     var nbProductsChecked = 0;
+    console.log("id prod[0] : " + ProductsToCheck[0].id);
     if (ProductsToCheck != null && ProductsToCheck != []) {
       console.log("length prods : " + ProductsToCheck.length);
-      ProductsToCheck.forEach(function(key, prod){
-        //console.log(prod.id.toString());
+      ProductsToCheck.forEach(function(prod){
+        console.log(prod);
         if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) {isCorrect = false; incorrectResponse += " quantity product incorrect |";}
         if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())){isCorrect = false; incorrectResponse += " id product incorect |";}
         else {
-          Product.find({id : prod.id.toString()}, {_id : 0}, function(err, prods){
-            if (err) throw err;
 
-            if(validator.isEmpty(prods.toString())){
-              console.log("product not found in db");
-              isProductsExisting = false;
-              incorrectResponse += "id product not found | "
-            }
-            else{
-              console.log("product found in db");
-            }
-          });
+          async function checkProduct(product) {
+            function findProduct(prod){
+              return new Promise(resolve =>{
+
+                Product.find({id : prod.id.toString()}, {_id : 0}, function(err, prods){
+                  if (err){
+                    throw err;
+                  }
+
+                  if(validator.isEmpty(prods.toString())){
+                    console.log("product not found in db");
+                    isProductsExisting = false;
+                    isCorrect = false;
+                    incorrectResponse += "id product not found | ";
+                  }
+                  else{
+                    console.log("product found in db");
+                  }
+
+                }).then(function(){ resolve(null);});
+
+              });
+            };
+
+            await findProduct(product);
+
+          }
+
+          checkProduct(prod);
+          console.log("await async " + prod.id);
         }
       });
+
+
+
+
+
+      /*var allMyPromises = new Promise(function (resolve) {
+        var productPromises = ProductsToCheck.map(function (value, index) {
+          return new Promise(function (ar) {
+            var produc;
+            console.log("id : " + value.id);
+            var getProductRequest = getProductsRequest + "/" + value.id;
+
+            $.getJSON(getProductRequest, function (data) {
+              produc = data;
+              console.log(produc);
+            }).done(function () {
+              ar({ "id": produc.id, "name": produc.name, "price": produc.price, "quantity": value.quantity });
+              lstProductsSorted.push({ "id": produc.id, "name": produc.name, "price": produc.price, "quantity": value.quantity });
+              console.log("Nombre d'élément dans le panier : " + lstProductsSorted.length);
+            });
+          });
+        });
+        Promise.all(productPromises).then(function (values) {
+          resolve(values);
+        })
+      });
+
+      lstProductsSorted = await allMyPromises;
+      */
+
+
+
+
+
+
+
+
+
+
 
       callback();
 

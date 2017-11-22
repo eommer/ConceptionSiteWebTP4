@@ -39,8 +39,8 @@ $(document).ready(function () {
         var productPromises = items.map(function (value, index) {
           return new Promise(function (ar) {
             var produc;
-            console.log("id : " + value.idProduct);
-            var getProductRequest = getProductsRequest + "/" + value.idProduct;
+            console.log("id : " + value.productId);
+            var getProductRequest = getProductsRequest + "/" + value.productId;
 
             $.getJSON(getProductRequest, function (data) {
               produc = data;
@@ -153,8 +153,8 @@ $(document).ready(function () {
         }
 
         if (ind != -1) {
-          let productToChange = { "idProduct": indexToReduce, "quantity": parseInt(lstProductsSorted[ind].quantity) - 1 };
-
+          let productToChange = { "productId": indexToReduce, "quantity": parseInt(lstProductsSorted[ind].quantity) - 1 };
+          console.log("put : " + productToChange.productId + " , " + productToChange.quantity);
           //Envoi de la requète HTTP pour réduire la quantité du produit dans panier côté serveur
           $.ajax({
             url: getPanierRequest,
@@ -181,7 +181,7 @@ $(document).ready(function () {
         }
 
         if (ind != -1) {
-          let productToChange = { "idProduct": indexToIncrease, "quantity": parseInt(lstProductsSorted[ind].quantity) + 1 };
+          let productToChange = { "productId": indexToIncrease, "quantity": parseInt(lstProductsSorted[ind].quantity) + 1 };
 
           //Envoi de la requète HTTP pour augmenter la quantité du produit dans panier côté serveur
           $.ajax({
