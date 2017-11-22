@@ -127,6 +127,7 @@ $(document).ready(function () {
         if (responseConfirm == true) {
 
           let deleteItemRequest = getPanierRequest + "/" + indexToRemove;
+          console.log("delete : " + deleteItemRequest);
 
           //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
           $.ajax({
