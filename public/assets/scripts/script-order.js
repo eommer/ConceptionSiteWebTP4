@@ -46,10 +46,14 @@ $(document).ready(function () {
       }).done(function () {
         $.getJSON(shoppingCartRequest, function (data) {
           items = data;
-        }).done(function () {
+          var index = 0;
           items.forEach(function(val){
-
-          }).done(function(){
+            var newItem = {id : val.productId, quantity : val.quantity};
+            itemsForOrder[index] = newItem;
+            console.log("itemsForOrder["+index+"] : id : " + itemsForOrder[index].id + " , quantity : " + itemsForOrder[index].quantity);
+            index++;
+          })
+        }).done(function () {
             var idOrder;
             //Pas encore de commande dans la base de données
             if (orders.length == 0) {
@@ -86,7 +90,6 @@ $(document).ready(function () {
           })
 
         });
-      });
 
       //getOrders();
     }
