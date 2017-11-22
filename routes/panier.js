@@ -15,8 +15,9 @@ var jsonParser = bodyParser.json();
 /* Get all products from shopping-cart*/
 router.get("/", function(req, res) {
   if(!req.session.panier){
-    req.session.panier = [];
+    req.session.panier = new Array();
   }
+  console.log(req.session.panier);
   res.status(200);  //Code 200(OK)
   res.send(req.session.panier);
 });
@@ -53,8 +54,8 @@ router.post("/", function(req, res) {
   var nbError = 0;
 
   checkId(req.body.id, function(){
-    if(!validator.isNumeric(req.body.id.toString()) || validator.isEmpty(req.body.id.toString()) || isIdCorrect == false){isCorrect = false; nbError++;; incorrectResponse += " | id";}
-    if(!validator.isInt(req.body.quantity.toString(), {min:0}) || validator.isEmpty(req.body.quantity.toString())){isCorrect = false; nbError++; incorrectResponse += " | quantity";}
+    if(!req.body.id || !validator.isNumeric(req.body.id.toString()) || validator.isEmpty(req.body.id.toString()) || isIdCorrect == false){isCorrect = false; nbError++;; incorrectResponse += " | id";}
+    if(!req.body.quantity || !validator.isInt(req.body.quantity.toString(), {min:0}) || validator.isEmpty(req.body.quantity.toString())){isCorrect = false; nbError++; incorrectResponse += " | quantity";}
 
     if(isCorrect){
       //Regarde si le panier existe
