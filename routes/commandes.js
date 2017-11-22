@@ -51,7 +51,6 @@ router.post("/", function (req, res) {
   var incorrectResponse = "";
   var isIdCorrect = true;
   var isCorrect = true;
-  var isFeaturesCorrect = true;
   var isProductsExisting = true;
 
   checkId(req.body.id, function () {
@@ -116,23 +115,25 @@ router.post("/", function (req, res) {
     var nbProductsChecked = 0;
     if (ProductsToCheck != null && ProductsToCheck != []) {
       console.log("length prods : " + ProductsToCheck.length);
-      for(let prod of ProductsToCheck){
+      ProductsToCheck.forEach(function(key, prod){
         //console.log(prod.id.toString());
-        if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())){isFeaturesCorrect = false; incorrectResponse += " id product incorect |";}
-        if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) {isFeaturesCorrect = false; incorrectResponse += " quantity product incorrect |";}
-        Product.find({id : prod.id.toString()}, {_id : 0}, function(err, prods){
-          if (err) throw err;
+        if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) {isCorrect = false; incorrectResponse += " quantity product incorrect |";}
+        if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())){isCorrect = false; incorrectResponse += " id product incorect |";}
+        else {
+          Product.find({id : prod.id.toString()}, {_id : 0}, function(err, prods){
+            if (err) throw err;
 
-          if(validator.isEmpty(prods.toString())){
-            console.log("product not found in db");
-            isProductsExisting = false;
-            incorrectResponse += "id product not found | "
-          }
-          else{
-            console.log("product found in db");
-          }
-        });
-      }
+            if(validator.isEmpty(prods.toString())){
+              console.log("product not found in db");
+              isProductsExisting = false;
+              incorrectResponse += "id product not found | "
+            }
+            else{
+              console.log("product found in db");
+            }
+          });
+        }
+      });
 
       callback();
 
