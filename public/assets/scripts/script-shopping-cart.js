@@ -95,7 +95,7 @@ $(document).ready(function () {
 
         $("#table-shop").append("<tr>\
                                     <td><button id=\"delete-"+ product.id + "\" class=\"remove-item-button\">x</button></td>\
-                                    <td><a href=\"product.html?id="+ product.id + "\">" + (product.name).toString() + "</a></td>\
+                                    <td><a href=\"produit?id="+ product.id + "\">" + (product.name).toString() + "</a></td>\
                                     <td >"+ price + "$</td>\
                                     <td><button id=\"reduce-"+ product.id + "\" class=\"remove-quantity-button\">-</button><div class=\"quantity\">" + product.quantity + "</div><button id=\"add-" + product.id + "\" class=\"add-quantity-button\">+</button></td>\
                                     <td class=\"price\">"+ priceTotalProduct + "$</td>\
