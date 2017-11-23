@@ -114,7 +114,7 @@ router.post("/", function (req, res) {
 });
 
 /* Mise à jour d'un item dans le panier */
-router.put("/", function (req, res) {
+router.put("/:id", function (req, res) {
   var isCorrect = true;
   var isproductIdCorrect = true;
   var locationItem;
@@ -123,8 +123,7 @@ router.put("/", function (req, res) {
   var nbError = 0;
   
   if (req.body) {
-    checkproductId(req.body.productId, function () {
-      if (!validator.isNumeric(req.body.productId.toString()) || validator.isEmpty(req.body.productId.toString()) || isproductIdCorrect == false) { isCorrect = false; nbError++;; incorrectResponse += " | productId"; }
+    checkproductId(req.params.id, function () {
       if (!validator.isInt(req.body.quantity.toString(), { min: 0 }) || validator.isEmpty(req.body.quantity.toString())) { isCorrect = false; nbError++; incorrectResponse += " | quantity"; }
 
       if (isCorrect) {
@@ -132,7 +131,7 @@ router.put("/", function (req, res) {
         if (req.session.panier) {
           //Regarde si le produit est déjà présent dans le panier
           for (var i = 0; i < req.session.panier.length; i++) {
-            if (req.session.panier[i].productId === req.body.productId) { isItemAlreadyInShoppingCart = true; locationItem = i; }
+            if (req.session.panier[i].productId === req.params.id) { isItemAlreadyInShoppingCart = true; locationItem = i; }
           }
           if (isItemAlreadyInShoppingCart) {
             req.session.panier[locationItem].quantity = req.body.quantity;
