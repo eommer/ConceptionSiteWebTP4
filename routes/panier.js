@@ -55,7 +55,7 @@ router.post("/", function (req, res) {
 
   if (req.body) {
     checkProductId(req.body.productId, function () {
-      if (!req.body.productId || !validator.isNumeric(req.body.productId.toString()) || validator.isEmpty(req.body.productId.toString()) || isproductIdCorrect == false) { isCorrect = false; nbError++;; incorrectResponse += " | productId"; }
+      if (!req.body.productId || !validator.isNumeric(req.body.productId.toString()) || validator.isEmpty(req.body.productId.toString()) || !isproductIdCorrect) { isCorrect = false; nbError++;; incorrectResponse += " | productId"; }
       if (!req.body.quantity || !validator.isInt(req.body.quantity.toString(), { min: 0 }) || validator.isEmpty(req.body.quantity.toString())) { isCorrect = false; nbError++; incorrectResponse += " | quantity"; }
 
       if (isCorrect) {
@@ -99,21 +99,23 @@ router.post("/", function (req, res) {
 
   /* Check if an element with the same id is already in the DB */
   function checkProductId(idToCheck, callBack) {
-    if(validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())){
+    if (validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())) {
       Product.find({ id: idToCheck }, function (err, prods) {
         if (err) throw err;
 
-        if (validator.isEmpty(prods.toString())) {
-          console.log("no order existing");
+        //if (validator.isEmpty(prods.toString())) {
+        if (!prods) {
+          console.log("no product with this id : " + idToCheck);
+          isproductIdCorrect = false;
         }
         else {
-          console.log("order id already existing");
-          isIdCorrect = false;
+          console.log("product with this id in database : " + idToCheck);
         }
         callBack();
       });
     }
-    else{
+    else {
+      isproductIdCorrect = false;
       callBack();
     }
 
@@ -132,6 +134,7 @@ router.put("/:id", function (req, res) {
 
   if (req.body) {
     checkProductId(req.params.id, function () {
+      if(!isproductIdCorrect){ isCorrect = false; nbError ++; incorrectResponse += " | quantity"; }
       if (!validator.isInt(req.body.quantity.toString(), { min: 0 }) || validator.isEmpty(req.body.quantity.toString())) { isCorrect = false; nbError++; incorrectResponse += " | quantity"; }
 
       if (isCorrect) {
@@ -139,7 +142,7 @@ router.put("/:id", function (req, res) {
         if (req.session.panier) {
           //Regarde si le produit est déjà présent dans le panier
           for (var i = 0; i < req.session.panier.length; i++) {
-            if (req.session.panier[i].productId === req.params.id) { isItemAlreadyInShoppingCart = true; locationItem = i; }
+            if (req.session.panier[i].productId == req.params.id) { isItemAlreadyInShoppingCart = true; locationItem = i; }
           }
           if (isItemAlreadyInShoppingCart) {
             req.session.panier[locationItem].quantity = req.body.quantity;
@@ -170,21 +173,23 @@ router.put("/:id", function (req, res) {
 
   /* Check if an element with the same id is already in the DB */
   function checkProductId(idToCheck, callBack) {
-    if(validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())){
+    if (validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())) {
       Product.find({ id: idToCheck }, function (err, prods) {
         if (err) throw err;
 
-        if (validator.isEmpty(prods.toString())) {
-          console.log("no order existing");
+        //if (validator.isEmpty(prods.toString())) {
+        if (!prods) {
+          console.log("no product existing with this id : " + idToCheck);
+          isproductIdCorrect = false;
         }
         else {
-          console.log("order id already existing");
-          isIdCorrect = false;
+          console.log("OK product existing with this id inside database : " + idToCheck);
         }
         callBack();
       });
     }
-    else{
+    else {
+      isproductIdCorrect = false;
       callBack();
     }
 
