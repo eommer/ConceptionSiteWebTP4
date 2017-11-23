@@ -196,6 +196,7 @@ router.delete("/:id", function(req, res) {
     else{
       Product.findOneAndRemove({ id: req.param('id') }, function(err) {
         if (err) throw err;
+        console.log("DELETE PRODUCT ID : " + req.param('id'));
         res.statusCode = "204";
         res.send("Product deleted");
         // we have deleted the user

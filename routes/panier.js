@@ -17,7 +17,13 @@ router.get("/", function (req, res) {
   if (!req.session.panier) {
     req.session.panier = new Array();
   }
-  console.log(req.session.panier);
+  console.log("||||||||||||| GET PANIER |||||||||||| : " +req.session.panier);
+  /*function sortJson(a,b){
+    let nameLowerCaseA = a.name.toLowerCase();
+    let nameLowerCaseB = b.name.toLowerCase();
+    return nameLowerCaseA > nameLowerCaseB? 1 : -1;
+  }
+  req.session.panier.sort(sortJson)*/
   res.status(200);  //Code 200(OK)
   res.send(req.session.panier);
 });
