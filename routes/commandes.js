@@ -56,7 +56,7 @@ router.post("/", function (req, res) {
 
   checkId(req.body.id, function () {
     checkProducts(req.body.products, function(){
-      if (!validator.isNumeric(req.body.id.toString()) || isIdCorrect == false) { isCorrect = false; incorrectResponse += " ID order incorrect |"; }
+      if (!validator.isInt(req.body.id.toString()) || isIdCorrect == false) { isCorrect = false; incorrectResponse += " ID order incorrect |"; }
       if (validator.isEmpty(req.body.firstName.toString())) { isCorrect = false; incorrectResponse += " firstName incorrect |"; }
       if (validator.isEmpty(req.body.lastName.toString())) { isCorrect = false; incorrectResponse += " lastName incorrect |"; }
       if (validator.isEmpty(req.body.email.toString()) || !validator.isEmail(req.body.email.toString())) { isCorrect = false; incorrectResponse += " email incorrect |"; }
@@ -96,18 +96,24 @@ router.post("/", function (req, res) {
 
   /* Check if an element with the same id is already in the DB */
   function checkId(idToCheck, callBack) {
-    Order.find({ id: idToCheck }, function (err, orders) {
-      if (err) throw err;
+    if(validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())){
+      Order.find({ id: idToCheck }, function (err, orders) {
+        if (err) throw err;
 
-      if (validator.isEmpty(orders.toString())) {
-        console.log("no order existing");
-      }
-      else {
-        console.log("order id already existing");
-        isIdCorrect = false;
-      }
+        if (validator.isEmpty(orders.toString())) {
+          console.log("no order existing");
+        }
+        else {
+          console.log("order id already existing");
+          isIdCorrect = false;
+        }
+        callBack();
+      });
+    }
+    else{
       callBack();
-    });
+    }
+
   }
 
 

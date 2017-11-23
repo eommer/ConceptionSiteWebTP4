@@ -149,19 +149,25 @@ router.post("/", function(req, res) {
   });
 
   /* Check if an element with the same id is already in the DB */
-  function checkId(idToCheck, callBack){
-    Product.find({id : idToCheck}, function(err, prods){
-      if (err) throw err;
+  function checkId(idToCheck, callBack) {
+    if(validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())){
+      Product.find({ id: idToCheck }, function (err, prods) {
+        if (err) throw err;
 
-      if(validator.isEmpty(prods.toString())){
-        console.log("no product existing");
-      }
-      else{
-        console.log("product already existing");
-        isIdCorrect = false;
-      }
+        if (validator.isEmpty(prods.toString())) {
+          console.log("no order existing");
+        }
+        else {
+          console.log("order id already existing");
+          isIdCorrect = false;
+        }
+        callBack();
+      });
+    }
+    else{
       callBack();
-    });
+    }
+
   }
 
   /* Check if the features are not empty and are strings */

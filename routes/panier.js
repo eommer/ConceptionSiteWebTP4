@@ -54,7 +54,7 @@ router.post("/", function (req, res) {
   var nbError = 0;
 
   if (req.body) {
-    checkproductId(req.body.productId, function () {
+    checkProductId(req.body.productId, function () {
       if (!req.body.productId || !validator.isNumeric(req.body.productId.toString()) || validator.isEmpty(req.body.productId.toString()) || isproductIdCorrect == false) { isCorrect = false; nbError++;; incorrectResponse += " | productId"; }
       if (!req.body.quantity || !validator.isInt(req.body.quantity.toString(), { min: 0 }) || validator.isEmpty(req.body.quantity.toString())) { isCorrect = false; nbError++; incorrectResponse += " | quantity"; }
 
@@ -97,20 +97,28 @@ router.post("/", function (req, res) {
     res.send("Les informations à enregistrer sont inexistantes");
   }
 
+  /* Check if an element with the same id is already in the DB */
+  function checkProductId(idToCheck, callBack) {
+    if(validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())){
+      Product.find({ id: idToCheck }, function (err, prods) {
+        if (err) throw err;
 
-
-  /* Check if an element with the same productId is in the database */
-  function checkproductId(productIdToCheck, callBack) {
-    Product.find({ id: productIdToCheck }, function (err, prods) {
-      if (err) throw err;
-
-      if (validator.isEmpty(prods.toString())) {
-        isproductIdCorrect = false;
-      }
-
+        if (validator.isEmpty(prods.toString())) {
+          console.log("no order existing");
+        }
+        else {
+          console.log("order id already existing");
+          isIdCorrect = false;
+        }
+        callBack();
+      });
+    }
+    else{
       callBack();
-    });
+    }
+
   }
+
 });
 
 /* Mise à jour d'un item dans le panier */
@@ -121,9 +129,9 @@ router.put("/:id", function (req, res) {
   var isItemAlreadyInShoppingCart = false;
   var incorrectResponse = "";
   var nbError = 0;
-  
+
   if (req.body) {
-    checkproductId(req.params.id, function () {
+    checkProductId(req.params.id, function () {
       if (!validator.isInt(req.body.quantity.toString(), { min: 0 }) || validator.isEmpty(req.body.quantity.toString())) { isCorrect = false; nbError++; incorrectResponse += " | quantity"; }
 
       if (isCorrect) {
@@ -160,19 +168,26 @@ router.put("/:id", function (req, res) {
     res.send("Les informations à enregistrer sont inexistantes");
   }
 
-  /* Check if an element with the same productId is in the database */
-  function checkproductId(productIdToCheck, callBack) {
-    Product.find({ id: productIdToCheck }, function (err, prods) {
-      //if (err) throw err;
-      if (err) {
-        console.log(err.toString());
-      }
+  /* Check if an element with the same id is already in the DB */
+  function checkProductId(idToCheck, callBack) {
+    if(validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())){
+      Product.find({ id: idToCheck }, function (err, prods) {
+        if (err) throw err;
 
-      if (validator.isEmpty(prods.toString())) {
-        isproductIdCorrect = false;
-      }
+        if (validator.isEmpty(prods.toString())) {
+          console.log("no order existing");
+        }
+        else {
+          console.log("order id already existing");
+          isIdCorrect = false;
+        }
+        callBack();
+      });
+    }
+    else{
       callBack();
-    });
+    }
+
   }
 });
 
@@ -205,6 +220,5 @@ router.delete("/", function (req, res) {
   res.status(204);    //Code 204(No Content)
   res.send();
 });
-
 
 module.exports = router;
