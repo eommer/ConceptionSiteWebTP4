@@ -55,6 +55,7 @@ router.post("/", function (req, res) {
 
   if (req.body) {
     checkProductId(req.body.productId, function () {
+      console.log("isproductIdCorrect : " + isproductIdCorrect);
       if (!req.body.productId || !validator.isNumeric(req.body.productId.toString()) || validator.isEmpty(req.body.productId.toString()) || !isproductIdCorrect) { isCorrect = false; nbError++;; incorrectResponse += " | productId"; }
       if (!req.body.quantity || !validator.isInt(req.body.quantity.toString(), { min: 0 }) || validator.isEmpty(req.body.quantity.toString())) { isCorrect = false; nbError++; incorrectResponse += " | quantity"; }
 
@@ -63,7 +64,7 @@ router.post("/", function (req, res) {
         if (req.session.panier) {
           //Regarde si un produit déjà présent dans le panier possède cet productId
           for (var i = 0; i < req.session.panier.length; i++) {
-            if (req.session.panier[i].productId === req.body.productId) { isItemAlreadyInShoppingCart = true; }
+            if (req.session.panier[i].productId == req.body.productId) { isItemAlreadyInShoppingCart = true; }
           }
 
           if (!isItemAlreadyInShoppingCart) {
@@ -104,7 +105,7 @@ router.post("/", function (req, res) {
         if (err) throw err;
 
         //if (validator.isEmpty(prods.toString())) {
-        if (!prods) {
+        if (prods.length == 0) {
           console.log("no product with this id : " + idToCheck);
           isproductIdCorrect = false;
         }
@@ -161,8 +162,14 @@ router.put("/:id", function (req, res) {
         }
       }
       else {
-        res.status(400);    //Code 400(Bad request)
-        res.send("Mauvaise requète. Il y a " + nbError + "élément(s) qui n'ont pas le bon le format \nErreur : " + incorrectResponse);
+        if(!isproductIdCorrect){
+          res.status(404);
+          res.send("Produit inexistant dans la base de données");
+        }
+        else{
+          res.status(400);    //Code 400(Bad request)
+          res.send("Mauvaise requète. Il y a " + nbError + "élément(s) qui n'ont pas le bon le format \nErreur : " + incorrectResponse);
+        }
       }
     });
   }
@@ -178,12 +185,12 @@ router.put("/:id", function (req, res) {
         if (err) throw err;
 
         //if (validator.isEmpty(prods.toString())) {
-        if (!prods) {
-          console.log("no product existing with this id : " + idToCheck);
+        if (prods.length == 0) {
+          console.log("no product with this id : " + idToCheck);
           isproductIdCorrect = false;
         }
         else {
-          console.log("OK product existing with this id inside database : " + idToCheck);
+          console.log("product with this id in database : " + idToCheck);
         }
         callBack();
       });
