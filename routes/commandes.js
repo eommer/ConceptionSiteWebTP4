@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 
 var validator = require('validator');
+var isPhoneNumber = require('is-phone-number');
 
 var mongoose = require("mongoose");
 mongoose.connect('mongodb://admin:1a2b3c@ds255265.mlab.com:55265/online-shop-db');
@@ -60,12 +61,13 @@ router.post("/", function (req, res) {
       if (validator.isEmpty(req.body.firstName.toString())) { isCorrect = false; incorrectResponse += " firstName incorrect |"; }
       if (validator.isEmpty(req.body.lastName.toString())) { isCorrect = false; incorrectResponse += " lastName incorrect |"; }
       if (validator.isEmpty(req.body.email.toString()) || !validator.isEmail(req.body.email.toString())) { isCorrect = false; incorrectResponse += " email incorrect |"; }
-      if (validator.isEmpty(req.body.phone.toString()) || !validator.isMobilePhone(req.body.phone.toString(), 'any')) { isCorrect = false; incorrectResponse += " phone incorrect |"; }
+      if (validator.isEmpty(req.body.phone.toString()) || !isPhoneNumber(req.body.phone.toString())){ isCorrect = false; incorrectResponse += " phone incorrect |"; }
       if (!isProductsExisting) { isCorrect = false; incorrectResponse += " products incorrect |"; }
 
 
       /* Save product in DB if fiels are corrects */
       if (isCorrect) {
+        console.log("ORDER VALID ! >> POST");
         var order = new Order();
         order.id = req.body.id;
         order.firstName = req.body.firstName;

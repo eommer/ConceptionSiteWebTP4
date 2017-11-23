@@ -13,11 +13,14 @@
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "express-session": "^1.15.5",
+    "is-phone-number": "^1.0.4",
     "mongoose": "^4.11.8",
     "morgan": "~1.8.1",
     "path": "^0.12.7",
+    "phone": "^2.0.0-rc.1",
     "pug": "~2.0.0-beta11",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "~2.4.2",
+    "validator": "^9.1.1"
   },
   "devDependencies": {
     "assert": "^1.4.1",
