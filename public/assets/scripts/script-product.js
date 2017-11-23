@@ -2,6 +2,7 @@
 var totalQuantity = 0;
 var quantityProduct = 1;
 var isProductInCart = false;
+var isFound = false;
 
 $(document).ready(function() {
 
@@ -17,8 +18,15 @@ $(document).ready(function() {
   console.log("|REQUEST GET PRODUCT| " +getProductRequest);
 
   //Rempli la page html avec les informations dans le fichier Json products.json
-  $.getJSON( getProductRequest, function( data ) {
-      var isFound = true;
+
+  $.getJSON(getProductRequest, function( data ) {
+
+    if(data!= null && data.length != 0){
+      // Si l'élément n'a pas été trouvé dans le fichier jsons
+      //(<=> l'id envoyé dans l'url ne correspond à aucun produit présent dans le fichier json)
+      console.log("data : " + data);
+
+      isFound = true;
       var val = data;
       var actualProduct = val;
       let price = ((actualProduct.price).toString()).split(".")[0].toString() + "," + ((actualProduct.price).toString()).split(".")[1].toString();
@@ -38,14 +46,19 @@ $(document).ready(function() {
         $('.form-control').attr('value', quantityProduct);
       });
 
-      // Si l'élément n'a pas été trouvé dans le fichier jsons
-      //(<=> l'id envoyé dans l'url ne correspond à aucun produit présent dans le fichier json)
-      if(!isFound){
-          $('main').empty();
-          $('header').after('<main><h1>Page non trouvée!</h1></main>');
-      }
+    }
 
+  }).catch(function(){
+    if(!isFound){
+      document.title = "Page non trouvée!";
+      console.log("no product");
+      $('main').empty();
+      $('header').after('<main><h1>Page non trouvée!</h1></main>');
+
+    }
   });
+
+
 
 
   //Gestion du clic sur le bouton
@@ -93,6 +106,7 @@ $(document).ready(function() {
   });
 
 });
+
 
 function getQuantityProduct(id, callback){
 

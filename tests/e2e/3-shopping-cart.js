@@ -129,6 +129,7 @@ function validateShoppingCartWithAPI(client, productsList) {
       var isValid = productsList.length === 0 || response.length === productsList.length &&
         response.every(function(item) {
           return productsList.find(function(product) {
+              console.log(product.id + " : " + item.productId + " | " + product.quantity + " : " + item.quantity);
               return product.id === item.productId && item.quantity === product.quantity;
             }) !== undefined;
         });
