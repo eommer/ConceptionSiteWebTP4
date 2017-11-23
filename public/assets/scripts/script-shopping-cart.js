@@ -154,11 +154,11 @@ $(document).ready(function () {
         }
 
         if (ind != -1) {
-          let productToChange = { "productId": indexToReduce, "quantity": parseInt(lstProductsSorted[ind].quantity) - 1 };
-          console.log("put : " + productToChange.productId + " , " + productToChange.quantity);
+          let productToChange = { "quantity": parseInt(lstProductsSorted[ind].quantity) - 1 };
+          console.log("put : " + productToChange.quantity);
           //Envoi de la requète HTTP pour réduire la quantité du produit dans panier côté serveur
           $.ajax({
-            url: getPanierRequest,
+            url: getPanierRequest + "/" + indexToReduce,
             type: 'PUT',
             data: productToChange,
             success: function () {
@@ -182,11 +182,11 @@ $(document).ready(function () {
         }
 
         if (ind != -1) {
-          let productToChange = { "productId": indexToIncrease, "quantity": parseInt(lstProductsSorted[ind].quantity) + 1 };
+          let productToChange = { "quantity": parseInt(lstProductsSorted[ind].quantity) + 1 };
 
           //Envoi de la requète HTTP pour augmenter la quantité du produit dans panier côté serveur
           $.ajax({
-            url: getPanierRequest,
+            url: getPanierRequest + "/" + indexToIncrease,
             type: 'PUT',
             data: productToChange,
             success: function () {
