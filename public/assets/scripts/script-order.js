@@ -83,7 +83,7 @@ $(document).ready(function () {
                   });
                 }
                 else {
-                  alert("Erreur dans l'enregistrement de votre commande : " + res);
+                  alert("Erreur dans l'enregistrement de votre commande : " + res.text);
                 }
               }
             });
