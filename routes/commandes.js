@@ -52,6 +52,7 @@ router.post("/", function (req, res) {
   var isIdCorrect = true;
   var isCorrect = true;
   var isProductsExisting = true;
+  var lstProducts = new Array();
 
   checkId(req.body.id, function () {
     checkProducts(req.body.products, function(){
@@ -112,96 +113,51 @@ router.post("/", function (req, res) {
 
   /* Vérifie que les informations (id et quantity) sur les produits sont ok */
   function checkProducts(ProductsToCheck, callback) {
-    var nbProductsChecked = 0;
-    console.log("id prod[0] : " + ProductsToCheck[0].id);
+
     if (ProductsToCheck != null && ProductsToCheck != []) {
-      console.log("length prods : " + ProductsToCheck.length);
-      ProductsToCheck.forEach(function(prod){
-        console.log(prod);
-        if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) {isCorrect = false; incorrectResponse += " quantity product incorrect |";}
-        if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())){isCorrect = false; incorrectResponse += " id product incorect |";}
-        else {
+      getLstProducts(function(){
 
-          async function checkProduct(product) {
-            function findProduct(prod){
-              return new Promise(resolve =>{
-
-                Product.find({id : prod.id.toString()}, {_id : 0}, function(err, prods){
-                  if (err){
-                    throw err;
-                  }
-
-                  if(validator.isEmpty(prods.toString())){
-                    console.log("product not found in db");
-                    isProductsExisting = false;
-                    isCorrect = false;
-                    incorrectResponse += "id product not found | ";
-                  }
-                  else{
-                    console.log("product found in db");
-                  }
-
-                }).then(function(){ resolve(null);});
-
-              });
-            };
-
-            await findProduct(product);
-
+        console.log("length prods : " + ProductsToCheck.length);
+        ProductsToCheck.forEach(function(prod){
+          console.log(prod);
+          if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) {isCorrect = false; incorrectResponse += " quantity product incorrect |";}
+          if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())){isCorrect = false; incorrectResponse += " id product incorect |";}
+          var productCorres = false;
+          console.log("length : " + lstProducts.length);
+          lstProducts.forEach(function(data){
+            console.log("compare prod id : " + prod.id + " > data id : " + data.id);
+            if(data.id === prod.id){
+              console.log("correspondance found!");
+              productCorres = true;
+            }
+          });
+          if(productCorres == false){
+            console.log("no correspondance found!");
+            isProductsExisting = false;
+            isCorrect = false;
+            incorrectResponse += " no product in db for id : " + prod.id + " | ";
           }
 
-          checkProduct(prod);
-          console.log("await async " + prod.id);
-        }
-      });
-
-
-
-
-
-      /*var allMyPromises = new Promise(function (resolve) {
-        var productPromises = ProductsToCheck.map(function (value, index) {
-          return new Promise(function (ar) {
-            var produc;
-            console.log("id : " + value.id);
-            var getProductRequest = getProductsRequest + "/" + value.id;
-
-            $.getJSON(getProductRequest, function (data) {
-              produc = data;
-              console.log(produc);
-            }).done(function () {
-              ar({ "id": produc.id, "name": produc.name, "price": produc.price, "quantity": value.quantity });
-              lstProductsSorted.push({ "id": produc.id, "name": produc.name, "price": produc.price, "quantity": value.quantity });
-              console.log("Nombre d'élément dans le panier : " + lstProductsSorted.length);
-            });
-          });
         });
-        Promise.all(productPromises).then(function (values) {
-          resolve(values);
-        })
+          callback();
+
       });
-
-      lstProductsSorted = await allMyPromises;
-      */
-
-
-
-
-
-
-
-
-
-
-
-      callback();
-
     }
     else{
       callback();
     }
+
   }
 
+  function getLstProducts(callback){
+    Product.find({}, {_id : 0}, function(err, prods){
+
+      lstProducts = prods;
+
+      callback();
+
+    })
+  }
 
 });
 
