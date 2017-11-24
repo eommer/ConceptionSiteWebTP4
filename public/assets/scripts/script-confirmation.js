@@ -9,17 +9,12 @@ $(document).ready(function () {
 
     orderRequest = "http://localhost:8000/api/orders/" + id;
 
-    console.log("|REQUEST| : " + orderRequest);
-
     getOrder();
 });
 
 function getOrder() {
-    console.log(orderRequest);
-
     $.getJSON(orderRequest, function (data) {
         order = data;
-        console.log(order);
     }).done(function () {
         var numCommande = " " + order.id;
         var user = " " + order.firstName + " " + order.lastName;

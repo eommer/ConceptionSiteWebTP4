@@ -12,10 +12,8 @@ $(document).ready(function () {
   /** Get all items from the shopping-cart by REST request */
   function getItemsFromShoppingCart() {
     $.getJSON(getPanierRequest, function (data) {
-      console.log("data : " + data);
       items = data;
       nbProducts = items.length;
-      console.log("nombre product : " + nbProducts);
     }).done(function () {
       addItemsToHtmlShopping();
     });
@@ -39,16 +37,13 @@ $(document).ready(function () {
         var productPromises = items.map(function (value, index) {
           return new Promise(function (ar) {
             var produc;
-            console.log("id : " + value.productId);
             var getProductRequest = getProductsRequest + "/" + value.productId;
 
             $.getJSON(getProductRequest, function (data) {
               produc = data;
-              console.log(produc);
             }).done(function () {
               ar({ "id": produc.id, "name": produc.name, "price": produc.price, "quantity": value.quantity });
               lstProductsSorted.push({ "id": produc.id, "name": produc.name, "price": produc.price, "quantity": value.quantity });
-              console.log("Nombre d'élément dans le panier : " + lstProductsSorted.length);
             });
           });
         });
@@ -63,7 +58,6 @@ $(document).ready(function () {
       calculTotalPrice();
       var totalPriceStr = (((totalPrice).toFixed(2)).toString()).split(".")[0].toString() + "," + (((totalPrice).toFixed(2)).toString()).split(".")[1].toString();
 
-      //////VOIR POUR SUPPRIMER CA
       $("span.count").html(calculTotalQuantity());
 
       $("#main-cart").empty();
@@ -127,7 +121,6 @@ $(document).ready(function () {
         if (responseConfirm == true) {
 
           let deleteItemRequest = getPanierRequest + "/" + indexToRemove;
-          console.log("delete : " + deleteItemRequest);
 
           //Envoi de la requète HTTP pour supprimer le produit du panier côté serveur
           $.ajax({
@@ -155,7 +148,6 @@ $(document).ready(function () {
 
         if (ind != -1) {
           let productToChange = { "quantity": parseInt(lstProductsSorted[ind].quantity) - 1 };
-          console.log("put : " + productToChange.quantity);
           //Envoi de la requète HTTP pour réduire la quantité du produit dans panier côté serveur
           $.ajax({
             url: getPanierRequest + "/" + indexToReduce,

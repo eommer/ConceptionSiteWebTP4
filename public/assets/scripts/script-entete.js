@@ -1,41 +1,35 @@
 var totalQuantity = 0;
 
-$(document).ready(function() {
-    var nbProduit;
+$(document).ready(function () {
+  var nbProduit;
 
-    entete();
+  entete();
 
-    function entete(){
+  function entete() {
 
-      calculTotalQuantity(function(){
-        if(totalQuantity > 0 ){
-          $('span.count').show();
-          $('span.count').html(totalQuantity);
-        }
-        else{
-          $('span.count').hide();
-        }
-
-      });
-
-
-    }
-
+    calculTotalQuantity(function () {
+      if (totalQuantity > 0) {
+        $('span.count').show();
+        $('span.count').html(totalQuantity);
+      }
+      else {
+        $('span.count').hide();
+      }
+    });
+  }
 });
 
-function calculTotalQuantity(callback){
+function calculTotalQuantity(callback) {
 
   totalQuantity = 0;
   /* Calculates the quantity of items in the shopping-cart */
   var totalQuantityRequest = "http://localhost:8000/api/shopping-cart/";
-  $.getJSON( totalQuantityRequest , function( data ) {
-    $.each( data, function( key, val ) {
-      console.log("quantity added : " + val.quantity);
+  $.getJSON(totalQuantityRequest, function (data) {
+    $.each(data, function (key, val) {
       totalQuantity += parseInt(val.quantity.toString());
     });
-  }).done(function(){
-      console.log("total quantity : " + totalQuantity);
-      callback();
+  }).done(function () {
+    callback();
   });
 
 }
