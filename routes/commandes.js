@@ -17,7 +17,6 @@ router.get("/", function (req, res) {
   Order.find({}, { _id: 0 }, function (err, orders) {
     if (err) throw err;
 
-    console.log(" GET ALL : " + orders);
     let lstOrders = [];
     if (orders.length > 0) {
       lstOrders = orders;
@@ -38,7 +37,6 @@ router.get("/:id", function (req, res) {
       res.send("Order not found");
     }
     else {
-      console.log("GET " + req.params.id.toString() + " : " + orders)
       res.status(200)   //Code : 200(OK)
       res.send(orders[0]);
     }
@@ -67,7 +65,6 @@ router.post("/", function (req, res) {
 
       /* Save product in DB if fiels are corrects */
       if (isCorrect) {
-        console.log("ORDER VALID ! >> POST");
         var order = new Order();
         order.id = req.body.id;
         order.firstName = req.body.firstName;
@@ -78,7 +75,6 @@ router.post("/", function (req, res) {
 
         order.save(function (err) {
           if (err) {
-            console.log(err);
             res.status(400);    //Code 400(Bad request)
             res.send(err);
           }
@@ -86,31 +82,23 @@ router.post("/", function (req, res) {
             res.status(201);      //Code 201(Created)
             res.send("Bien enregistré dans la base de données");
           }
-
         });
       }
       else {
-        console.log(incorrectResponse);
         res.status(400);        //Code 400(Bad request)
         res.send(incorrectResponse);
       }
     });
-
-
   });
 
 
-  /* Check if an element with the same id is already in the DB */
+  /** Check if an element with the same id is already in the DB */
   function checkId(idToCheck, callBack) {
     if (validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())) {
       Order.find({ id: idToCheck }, function (err, orders) {
         if (err) throw err;
 
-        if (validator.isEmpty(orders.toString())) {
-          console.log("no order existing");
-        }
-        else {
-          console.log("order id already existing");
+        if (!validator.isEmpty(orders.toString())) {
           isIdCorrect = false;
         }
         callBack();
@@ -119,58 +107,45 @@ router.post("/", function (req, res) {
     else {
       callBack();
     }
-
   }
 
 
-  /* Vérifie que les informations (id et quantity) sur les produits sont ok */
+  /** Vérifie que les informations (id et quantity) sur les produits sont ok */
   function checkProducts(ProductsToCheck, callback) {
 
     if (ProductsToCheck != null && ProductsToCheck != []) {
       getLstProducts(function () {
 
-        console.log("length prods : " + ProductsToCheck.length);
         ProductsToCheck.forEach(function (prod) {
-          console.log(prod);
           if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) { isCorrect = false; incorrectResponse += " quantity product incorrect |"; }
           if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())) { isCorrect = false; incorrectResponse += " id product incorect |"; }
           var productCorres = false;
-          console.log("length : " + lstProducts.length);
           lstProducts.forEach(function (data) {
-            console.log("compare prod id : " + prod.id + " > data id : " + data.id);
             if (data.id == prod.id) {
-              console.log("correspondance found!");
               productCorres = true;
             }
           });
           if (productCorres == false) {
-            console.log("no correspondance found!");
             isProductsExisting = false;
             isCorrect = false;
             incorrectResponse += " no product in db for id : " + prod.id + " | ";
           }
-
         });
         callback();
-
       });
     }
     else {
       callback();
     }
-
   }
 
   function getLstProducts(callback) {
     Product.find({}, { _id: 0 }, function (err, prods) {
-
       lstProducts = prods;
 
       callback();
-
     })
   }
-
 });
 
 
@@ -200,6 +175,5 @@ router.delete("/", function (req, res) {
   res.status(204);      //Code 204(No content)
   res.send();
 });
-
 
 module.exports = router;
