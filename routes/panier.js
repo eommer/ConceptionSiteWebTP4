@@ -66,7 +66,7 @@ router.post("/", function (req, res) {
           }
 
           if (!isItemAlreadyInShoppingCart) {
-            req.session.panier.push({ productId: req.body.productId, quantity: req.body.quantity });
+            req.session.panier.push({ productId: parseInt(req.body.productId), quantity: parseInt(req.body.quantity) });
 
             res.status(201);    //Code 201(Created)
             res.send("Produit enregistré dans le panier.\nIl y a maintenant : " + req.session.panier.length);
@@ -79,7 +79,7 @@ router.post("/", function (req, res) {
         }
         else {
           req.session.panier = [];
-          req.session.panier.push({ productId: req.body.productId, quantity: req.body.quantity });
+          req.session.panier.push({ productId: parseInt(req.body.productId), quantity: parseInt(req.body.quantity) });
 
           res.status(201);    //Code 201(Created)
           res.send("Produit enregistré dans le panier.\nIl y a maintenant : " + req.session.panier.length);
@@ -137,7 +137,7 @@ router.put("/:id", function (req, res) {
             if (req.session.panier[i].productId == req.params.id) { isItemAlreadyInShoppingCart = true; locationItem = i; }
           }
           if (isItemAlreadyInShoppingCart) {
-            req.session.panier[locationItem].quantity = req.body.quantity;
+            req.session.panier[locationItem].quantity = parseInt(req.body.quantity);
 
             res.status(204);    //Code 204(No content)
             res.send();
