@@ -14,7 +14,7 @@ var jsonParser = bodyParser.json();
 
 /** Récupère toutes les commandes présentes dans la base de données */
 router.get("/", function (req, res) {
-  Order.find({}, {_id : 0}, function (err, orders) {
+  Order.find({}, { _id: 0 }, function (err, orders) {
     if (err) throw err;
 
     console.log(" GET ALL : " + orders);
@@ -30,7 +30,7 @@ router.get("/", function (req, res) {
 
 /** Récupère la commande avec l'id mis en paramètre */
 router.get("/:id", function (req, res) {
-  Order.find({ id: req.params.id.toString() }, {_id : 0}, function (err, orders) {
+  Order.find({ id: req.params.id.toString() }, { _id: 0 }, function (err, orders) {
     if (err) throw err;
 
     if (validator.isEmpty(orders.toString())) {
@@ -56,12 +56,12 @@ router.post("/", function (req, res) {
   var lstProducts = new Array();
 
   checkId(req.body.id, function () {
-    checkProducts(req.body.products, function(){
+    checkProducts(req.body.products, function () {
       if (!validator.isInt(req.body.id.toString()) || isIdCorrect == false) { isCorrect = false; incorrectResponse += " ID order incorrect |"; }
       if (validator.isEmpty(req.body.firstName.toString())) { isCorrect = false; incorrectResponse += " firstName incorrect |"; }
       if (validator.isEmpty(req.body.lastName.toString())) { isCorrect = false; incorrectResponse += " lastName incorrect |"; }
       if (validator.isEmpty(req.body.email.toString()) || !validator.isEmail(req.body.email.toString())) { isCorrect = false; incorrectResponse += " email incorrect |"; }
-      if (validator.isEmpty(req.body.phone.toString()) || !isPhoneNumber(req.body.phone.toString())){ isCorrect = false; incorrectResponse += " phone incorrect |"; }
+      if (validator.isEmpty(req.body.phone.toString()) || !isPhoneNumber(req.body.phone.toString())) { isCorrect = false; incorrectResponse += " phone incorrect |"; }
       if (!isProductsExisting) { isCorrect = false; incorrectResponse += " products incorrect |"; }
 
 
@@ -78,15 +78,19 @@ router.post("/", function (req, res) {
 
         order.save(function (err) {
           if (err) {
+            console.log(err);
             res.status(400);    //Code 400(Bad request)
             res.send(err);
           }
+          else {
+            res.status(201);      //Code 201(Created)
+            res.send("Bien enregistré dans la base de données");
+          }
 
-          res.status(201);      //Code 201(Created)
-          res.send("Bien enregistré dans la base de données");
         });
       }
       else {
+        console.log(incorrectResponse);
         res.status(400);        //Code 400(Bad request)
         res.send(incorrectResponse);
       }
@@ -98,7 +102,7 @@ router.post("/", function (req, res) {
 
   /* Check if an element with the same id is already in the DB */
   function checkId(idToCheck, callBack) {
-    if(validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())){
+    if (validator.isInt(idToCheck.toString()) && !validator.isEmpty(idToCheck.toString())) {
       Order.find({ id: idToCheck }, function (err, orders) {
         if (err) throw err;
 
@@ -112,7 +116,7 @@ router.post("/", function (req, res) {
         callBack();
       });
     }
-    else{
+    else {
       callBack();
     }
 
@@ -123,23 +127,23 @@ router.post("/", function (req, res) {
   function checkProducts(ProductsToCheck, callback) {
 
     if (ProductsToCheck != null && ProductsToCheck != []) {
-      getLstProducts(function(){
+      getLstProducts(function () {
 
         console.log("length prods : " + ProductsToCheck.length);
-        ProductsToCheck.forEach(function(prod){
+        ProductsToCheck.forEach(function (prod) {
           console.log(prod);
-          if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) {isCorrect = false; incorrectResponse += " quantity product incorrect |";}
-          if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())){isCorrect = false; incorrectResponse += " id product incorect |";}
+          if (validator.isEmpty(prod.quantity.toString()) || !validator.isInt(prod.quantity.toString())) { isCorrect = false; incorrectResponse += " quantity product incorrect |"; }
+          if (validator.isEmpty(prod.id.toString()) || !validator.isInt(prod.id.toString())) { isCorrect = false; incorrectResponse += " id product incorect |"; }
           var productCorres = false;
           console.log("length : " + lstProducts.length);
-          lstProducts.forEach(function(data){
+          lstProducts.forEach(function (data) {
             console.log("compare prod id : " + prod.id + " > data id : " + data.id);
-            if(data.id === prod.id){
+            if (data.id == prod.id) {
               console.log("correspondance found!");
               productCorres = true;
             }
           });
-          if(productCorres == false){
+          if (productCorres == false) {
             console.log("no correspondance found!");
             isProductsExisting = false;
             isCorrect = false;
@@ -147,18 +151,18 @@ router.post("/", function (req, res) {
           }
 
         });
-          callback();
+        callback();
 
       });
     }
-    else{
+    else {
       callback();
     }
 
   }
 
-  function getLstProducts(callback){
-    Product.find({}, {_id : 0}, function(err, prods){
+  function getLstProducts(callback) {
+    Product.find({}, { _id: 0 }, function (err, prods) {
 
       lstProducts = prods;
 
