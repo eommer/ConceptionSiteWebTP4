@@ -47,49 +47,49 @@ $(document).ready(function () {
         $.getJSON(shoppingCartRequest, function (data) {
           items = data;
           var index = 0;
-          items.forEach(function(val){
-            var newItem = {id : val.productId, quantity : val.quantity};
+          items.forEach(function (val) {
+            var newItem = { id: val.productId, quantity: val.quantity };
             itemsForOrder[index] = newItem;
-            console.log("itemsForOrder["+index+"] : id : " + itemsForOrder[index].id + " , quantity : " + itemsForOrder[index].quantity);
+            console.log("itemsForOrder[" + index + "] : id : " + itemsForOrder[index].id + " , quantity : " + itemsForOrder[index].quantity);
             index++;
           })
         }).done(function () {
-            var idOrder;
-            //Pas encore de commande dans la base de données
-            if (orders.length == 0) {
-              idOrder = 0;
-            }
-            else {
-              idOrder = parseInt(orders[orders.length - 1].id) + 1;
-            }
-            order = JSON.stringify({ "id": idOrder, "firstName": $("#first-name").val(), "lastName": $("#last-name").val(), "email": $("#email").val(), "phone": $("#phone").val(), "products": itemsForOrder });
+          var idOrder;
+          //Pas encore de commande dans la base de données
+          if (orders.length == 0) {
+            idOrder = 1;
+          }
+          else {
+            idOrder = parseInt(orders[orders.length - 1].id) + 1;
+          }
+          order = JSON.stringify({ "id": idOrder, "firstName": $("#first-name").val(), "lastName": $("#last-name").val(), "email": $("#email").val(), "phone": $("#phone").val(), "products": itemsForOrder });
 
-            jQuery.ajax({
-              url: orderRequest,
-              type: "POST",
-              data: order,
-              contentType: "application/json",
-              complete: function (res) {
-                console.log("res : " + res.status);
+          jQuery.ajax({
+            url: orderRequest,
+            type: "POST",
+            data: order,
+            contentType: "application/json",
+            complete: function (res) {
+              console.log("res : " + res.status);
 
-                if (res.status == 201) {
-                  //Suppression de tous les éléments du panier
-                  $.ajax({
-                    url: shoppingCartRequest,
-                    type: 'DELETE',
-                    success: function () {
-                      document.location.href = "http://localhost:8000/confirmation?id=" + idOrder;
-                    }
-                  });
-                }
-                else {
-                  alert("Erreur dans l'enregistrement de votre commande : " + res.text);
-                }
+              if (res.status == 201) {
+                //Suppression de tous les éléments du panier
+                $.ajax({
+                  url: shoppingCartRequest,
+                  type: 'DELETE',
+                  success: function () {
+                    document.location.href = "http://localhost:8000/confirmation?id=" + idOrder;
+                  }
+                });
               }
-            });
-          })
+              else {
+                //alert("Erreur dans l'enregistrement de votre commande : " + res.text);
+              }
+            }
+          });
+        })
 
-        });
+      });
 
       //getOrders();
     }
